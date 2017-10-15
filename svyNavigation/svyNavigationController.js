@@ -1,4 +1,5 @@
 /**
+ * @constructor 
  * @public
  * @classdesc Used as interface for objects which can handle navigation requests (e.g. shell or main forms, etc.) to perform the actual opening, docking, closing, etc. of application forms.
  * @properties={typeid:24,uuid:"4E11AA6B-2D12-4D62-B36E-826BDB5E0695"}
