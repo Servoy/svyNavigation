@@ -164,7 +164,10 @@ function setupNavigationItem() {
      * @return {{qualifiedMethodName: String, arg: Object}} The close callback information or null if a close callback is to assigned.
      */
     NavigationItem.prototype.getCloseCallbackInfo = function() {
-        /** @type {{qualifiedMethodName: String, arg: Object}} */
+        /**
+         * @private  
+         * @type {{qualifiedMethodName: String, arg: Object}} 
+         */
         var res = this.m_CloseCallbackInfo;
         return res;
     };
