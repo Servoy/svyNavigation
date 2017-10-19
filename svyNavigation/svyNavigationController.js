@@ -217,7 +217,10 @@ function NavigationController(handler) {
      * @return {scopes.svyNavigationModel.NavigationContext}
      */
     this.getFormInstanceContext = function(formInstanceName){
-        /** @type {scopes.svyNavigationModel.NavigationContext} */
+        /**
+         * @private  
+         * @type {scopes.svyNavigationModel.NavigationContext} 
+         */
         var context = m_FormInstanceContextMap[formInstanceName] || null;
         return context;
     }
