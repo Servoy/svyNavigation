@@ -1,13 +1,20 @@
+/**
+ * @private
+ * @properties={typeid:35,uuid:"0E8F4018-86A0-422F-B185-941E2B20F347",variableType:-4}
+ */
+var m_ManagedContexts = {};
+
 /*================== NavigationHandler interface implementation START ========================*/
 /**
  * @public
  * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
  * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+ * @param {scopes.svyNavigationController.NavigationController} navigationController
  * @throws {Error} If the form could not be opened.
  *
  * @properties={typeid:24,uuid:"D48A9B96-9745-45B7-9D4E-C7E823235FB0"}
  */
-function openFormInApplication(navigationItem, navigationContext) {
+function openFormInApplication(navigationItem, navigationContext, navigationController) {
     var contextId = navigationContext.getContextID();
     /** @type {RuntimeForm<contextContainer>} */
     var contextContainer = forms[contextId];
@@ -21,8 +28,10 @@ function openFormInApplication(navigationItem, navigationContext) {
             return;
         }
     }
-    contextContainer.setNavigationContext(navigationContext);
-
+    var formInstanceName = contextContainer.setNavigationContext(navigationContext);
+    navigationController.registerFormInstance(formInstanceName,navigationContext);
+    m_ManagedContexts[contextId] = 'tab';
+    
     var tabCnt = elements.tabPanelMain.getMaxTabIndex();
     for (var index = 1; index <= tabCnt; index++) {
         if (elements.tabPanelMain.getTabFormNameAt(index) == contextId) {
@@ -35,23 +44,73 @@ function openFormInApplication(navigationItem, navigationContext) {
  * @public
  * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
  * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+ * @param {scopes.svyNavigationController.NavigationController} navigationController
  * @throws {Error} If the form could not be opened.
  *
  * @properties={typeid:24,uuid:"3033B322-D2A9-42FF-83A2-2094EC2F775A"}
  */
-function openFormInDialog(navigationItem, navigationContext) {
-    throw new Error('Abstract interface method');
+function openFormInDialog(navigationItem, navigationContext, navigationController) {
+    var contextId = navigationContext.getContextID();
+    /** @type {RuntimeForm<contextContainer>} */
+    var contextContainer = forms[contextId];
+    if (!contextContainer) {
+        var ok = application.createNewFormInstance(forms.contextContainer.controller.getName(), contextId);
+        if (ok) {
+            /** @type {RuntimeForm<contextContainer>} */
+            contextContainer = forms[contextId];
+        } else {
+            plugins.dialogs.showErrorDialog('Error', 'Could not create context container form instance');
+            return;
+        }
+    }
+    var formInstanceName = contextContainer.setNavigationContext(navigationContext);
+    navigationController.registerFormInstance(formInstanceName,navigationContext);
+    m_ManagedContexts[contextId] = 'dialog';
+    
+    var win = application.getWindow(contextId);
+    if (!win) {
+        win = application.createWindow(contextId, JSWindow.DIALOG);
+        win.resizable = true;
+        win.title = navigationItem.getText();
+    }
+    
+    win.show(contextContainer);
 }
 /**
  * @public
  * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
  * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+ * @param {scopes.svyNavigationController.NavigationController} navigationController
  * @throws {Error} If the form could not be opened.
  *
  * @properties={typeid:24,uuid:"F301FABD-30CC-4749-8AF7-B3CE92321384"}
  */
-function openFormInModalDialog(navigationItem, navigationContext) {
-    throw new Error('Abstract interface method');
+function openFormInModalDialog(navigationItem, navigationContext, navigationController) {
+    var contextId = navigationContext.getContextID();
+    /** @type {RuntimeForm<contextContainer>} */
+    var contextContainer = forms[contextId];
+    if (!contextContainer) {
+        var ok = application.createNewFormInstance(forms.contextContainer.controller.getName(), contextId);
+        if (ok) {
+            /** @type {RuntimeForm<contextContainer>} */
+            contextContainer = forms[contextId];
+        } else {
+            plugins.dialogs.showErrorDialog('Error', 'Could not create context container form instance');
+            return;
+        }
+    }
+    var formInstanceName = contextContainer.setNavigationContext(navigationContext);
+    navigationController.registerFormInstance(formInstanceName,navigationContext);
+    m_ManagedContexts[contextId] = 'modalDialog';
+    
+    var win = application.getWindow(contextId);
+    if (!win) {
+        win = application.createWindow(contextId, JSWindow.MODAL_DIALOG);                
+        win.resizable = true;
+        win.title = navigationItem.getText();
+    }
+    
+    win.show(contextContainer);
 }
 
 /**
@@ -63,7 +122,18 @@ function openFormInModalDialog(navigationItem, navigationContext) {
  * @properties={typeid:24,uuid:"2DF3A64E-C5EE-48F1-A7AF-A30884E12A2A"}
  */
 function closeCurrentForm(navigationContext) {
-    throw new Error('Abstract interface method');
+    var contextId = navigationContext.getContextID();
+    /** @type {RuntimeForm<contextContainer>} */
+    var contextContainer = forms[contextId];
+    if (!contextContainer) {
+        return false;
+    }
+    var currentFormInstanceName = contextContainer.getCurrentFormName();
+    contextContainer.setNavigationContext(null);
+    if (currentFormInstanceName) {
+        scopes.svyNavigation.unregisterFormInstance(currentFormInstanceName);
+    }
+    return true;
 }
 
 /**
@@ -75,7 +145,40 @@ function closeCurrentForm(navigationContext) {
  * @properties={typeid:24,uuid:"040CE9E2-03A1-4E85-9F2D-77EA5E1CA73A"}
  */
 function closeContext(navigationContext) {
-    throw new Error('Abstract interface method');
+    var contextId = navigationContext.getContextID();
+    var type = m_ManagedContexts[contextId];
+    if (!type){
+        plugins.dialogs.showErrorDialog('Error',utils.stringFormat('The specified context "%1$s" is not managed by the main form.',[contextId]))
+        return false;
+    }
+    switch (type) {
+        case 'tab': {
+            var tabCnt = elements.tabPanelMain.getMaxTabIndex();
+            for (var index = 1; index <= tabCnt; index++) {
+                if (elements.tabPanelMain.getTabFormNameAt(index) == contextId) {
+                    return elements.tabPanelMain.removeTabAt(index);
+                }
+            }
+            return false;
+        }
+        case 'dialog': 
+        case 'modalDialog': {
+            var win = application.getWindow(contextId);
+            if (!win){
+                return false;
+            }
+            if (win.hide()){
+                win.destroy();
+                return true;
+            }
+            return false;
+        }
+        
+        default: {
+            plugins.dialogs.showErrorDialog('Error', 'Unsupported container type: ' + type);
+            return false;
+        }
+    }
 }
 /*================== NavigationHandler interface implementation END ========================*/
 

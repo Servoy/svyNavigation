@@ -1,5 +1,5 @@
 customProperties:"formComponent:false",
-encapsulation:60,
+encapsulation:44,
 items:[
 {
 location:"30,32",
@@ -8,6 +8,15 @@ text:"appFormB",
 transparent:true,
 typeid:7,
 uuid:"0D22268C-BC72-4C8F-B066-2FEC20B7A79C"
+},
+{
+location:"168,187",
+name:"btnDrillDown",
+onActionMethodID:"B9FF761E-00A9-4781-9560-F1DDE90DFBF1",
+size:"195,34",
+text:"Drill Down \"B => A\" (replace)",
+typeid:7,
+uuid:"2FEF2C14-BCF1-4553-ADD5-2FD6F1E8F2DD"
 },
 {
 location:"12,114",
@@ -22,6 +31,15 @@ height:319,
 partType:5,
 typeid:19,
 uuid:"768FFA24-BB75-4D99-8B2F-E07FD5BE395B"
+},
+{
+location:"169,225",
+name:"btnModalDialog",
+onActionMethodID:"679757D9-5BF6-4AE5-81B2-C6A929145631",
+size:"190,42",
+text:"Modal Dialog With Close Callback",
+typeid:7,
+uuid:"7A650A76-A57D-4CCA-8413-9ECA24D09E2B"
 }
 ],
 name:"appFormB",

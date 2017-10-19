@@ -146,14 +146,14 @@ function setupNavigationItem() {
     };
     /**
      * @public
-     * @param {String} qualifiedMethodName If null will clear the close callback information, otherwise must be a fully qualified method name (e.g. form.formname.methodname or scope.scopename.methodname).
-     * @param {Object} [arg] Argument which should be passed to the close callback.
+     * @param {String} qualifiedMethodName If null will clear the close callback information, otherwise must be a fully qualified method name (e.g. forms.formname.methodname or scopes.scopename.methodname). The close callback method signature must be callback(source: NavigationItem, arg: Object)
+     * @param {Object} [arg] Argument which should be passed to the close callback as second argument.
      */
     NavigationItem.prototype.setCloseCallbackInfo = function(qualifiedMethodName, arg) {
         if (qualifiedMethodName === null) {
             this.m_CloseCallbackInfo = null;
         } else {
-            if (!qualifiedMethodName || utils.stringTrim(qualifiedMethodName)) {
+            if (!qualifiedMethodName || !utils.stringTrim(qualifiedMethodName)) {
                 throw new Error('Invalid callback qualified method name');
             }
             this.m_CloseCallbackInfo = { qualifiedMethodName: qualifiedMethodName, arg: (arg || null) };
@@ -161,7 +161,7 @@ function setupNavigationItem() {
     };
     /**
      * @public
-     * @return {{qualifiedMethodName: String, arg: Object}} The close callback information or null if a close callback is to assigned.
+     * @return {{qualifiedMethodName: String, arg: Object}} The close callback information or null if a close callback is not assigned.
      */
     NavigationItem.prototype.getCloseCallbackInfo = function() {
         /**

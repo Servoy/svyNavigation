@@ -1,5 +1,5 @@
 customProperties:"formComponent:false",
-encapsulation:60,
+encapsulation:44,
 items:[
 {
 height:139,
@@ -8,7 +8,15 @@ typeid:19,
 uuid:"39AAD9EF-2663-4421-A390-EB2F6A12702D"
 },
 {
-location:"32,15",
+location:"21,65",
+name:"lblInstanceId",
+size:"363,20",
+text:"label",
+typeid:7,
+uuid:"E11F7705-048E-4107-9CB5-216B2325C2DA"
+},
+{
+location:"22,17",
 size:"303,20",
 text:"toolDialogA",
 transparent:true,
@@ -18,6 +26,7 @@ uuid:"EDAA8CFC-F670-48D6-9D8C-F455A7937DFE"
 ],
 name:"toolDialogA",
 navigatorID:"-1",
+onShowMethodID:"839C2984-0D2B-4380-9877-314CAD796CCB",
 showInMenu:true,
 size:"506,139",
 typeid:3,

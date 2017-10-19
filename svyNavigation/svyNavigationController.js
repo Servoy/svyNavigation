@@ -1,5 +1,5 @@
 /**
- * @constructor 
+ * @constructor
  * @public
  * @classdesc Used as interface for objects which can handle navigation requests (e.g. shell or main forms, etc.) to perform the actual opening, docking, closing, etc. of application forms.
  * @properties={typeid:24,uuid:"4E11AA6B-2D12-4D62-B36E-826BDB5E0695"}
@@ -9,27 +9,30 @@ function NavigationHandler() {
      * @public
      * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
      * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+     * @param {NavigationController} navigationController
      * @throws {Error} If the form could not be opened.
      */
-    this.openFormInApplication = function(navigationItem, navigationContext) {
+    this.openFormInApplication = function(navigationItem, navigationContext, navigationController) {
         throw new Error('Abstract interface method');
     }
     /**
      * @public
      * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
      * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+     * @param {NavigationController} navigationController
      * @throws {Error} If the form could not be opened.
      */
-    this.openFormInDialog = function(navigationItem, navigationContext) {
+    this.openFormInDialog = function(navigationItem, navigationContext, navigationController) {
         throw new Error('Abstract interface method');
     }
     /**
      * @public
      * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
      * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+     * @param {NavigationController} navigationController
      * @throws {Error} If the form could not be opened.
      */
-    this.openFormInModalDialog = function(navigationItem, navigationContext) {
+    this.openFormInModalDialog = function(navigationItem, navigationContext, navigationController) {
         throw new Error('Abstract interface method');
     }
 
@@ -114,6 +117,11 @@ function NavigationController(handler) {
      * @type {Array<scopes.svyNavigationModel.NavigationContext>}
      */
     var m_ModalDialogContexts = [];
+    
+    /**
+     * @private 
+     */
+    var m_FormInstanceContextMap = {};
 
     /**
      * @private
@@ -143,15 +151,77 @@ function NavigationController(handler) {
         }
         m_AllContexts.push(context);
     }
+    
+    /**
+     * @private 
+     * @param {Array} array
+     * @param {*} item
+     */
+    function removeItemFromArray(array, item){
+        var indx = array.indexOf(item);
+        if (indx != -1) {
+            array.splice(indx, 1);
+        }
+    }
 
     /**
      * @private
      * @param {scopes.svyNavigationModel.NavigationContext} context
      */
     function unregisterContext(context) {
-        //TODO: implement this
+        removeItemFromArray(m_AllContexts, context);
+                
+        switch (context.getContextType()) {
+            case scopes.svyNavigationModel.NavigationContextType.Standard: {
+                removeItemFromArray(m_StandardContexts, context);
+                break;
+            }
+            case scopes.svyNavigationModel.NavigationContextType.Dialog: {
+                removeItemFromArray(m_DialogContexts, context);
+                break;
+            }
+            case scopes.svyNavigationModel.NavigationContextType.ModalDialog: {
+                removeItemFromArray(m_ModalDialogContexts, context);
+                break;
+            }
+            default: {
+                throw new Error('Unknown context type: ' + context.getContextType());
+            }
+        }
     }
 
+    /**
+     * @public
+     * @param {String} formInstanceName
+     * @param {scopes.svyNavigationModel.NavigationContext} context
+     */
+    this.registerFormInstance = function(formInstanceName, context){
+        if (this.contextIsRegistered(context)){
+            m_FormInstanceContextMap[formInstanceName] = context;
+        } else {
+            throw new Error(utils.stringFormat('The context "%1$s" is not registered with this navigation controller.',[context.getContextID()]));
+        }
+    }
+    
+    /**
+     * @public
+     * @param {String} formInstanceName
+     */
+    this.unregisterFormInstance = function(formInstanceName){
+        delete m_FormInstanceContextMap[formInstanceName];
+    }
+    
+    /**
+     * @public
+     * @param {String} formInstanceName
+     * @return {scopes.svyNavigationModel.NavigationContext}
+     */
+    this.getFormInstanceContext = function(formInstanceName){
+        /** @type {scopes.svyNavigationModel.NavigationContext} */
+        var context = m_FormInstanceContextMap[formInstanceName] || null;
+        return context;
+    }
+    
     /**
      * @public
      * @param {scopes.svyNavigationModel.NavigationContext} context
@@ -159,6 +229,21 @@ function NavigationController(handler) {
      */
     this.contextIsRegistered = function(context) {
         return (m_AllContexts.indexOf(context) != -1);
+    }
+    
+    /**
+     * @public
+     * @param {String} contextId
+     * @return {scopes.svyNavigationModel.NavigationContext}
+     */
+    this.getContextById = function(contextId) {
+        for (var index = 0; index < m_AllContexts.length; index++) {
+            var item = m_AllContexts[index];
+            if (item.getContextID() == contextId) {
+                return item;
+            }                
+        }
+        return null;
     }
 
     /**
@@ -177,15 +262,15 @@ function NavigationController(handler) {
     function openForm(navigationItem, navigationContext) {
         switch (navigationContext.getContextType()) {
             case scopes.svyNavigationModel.NavigationContextType.Standard: {
-                handler.openFormInApplication(navigationItem, navigationContext);
+                handler.openFormInApplication(navigationItem, navigationContext, self);
                 break;
             }
             case scopes.svyNavigationModel.NavigationContextType.Dialog: {
-                handler.openFormInDialog(navigationItem, navigationContext);
+                handler.openFormInDialog(navigationItem, navigationContext, self);
                 break;
             }
             case scopes.svyNavigationModel.NavigationContextType.ModalDialog: {
-                handler.openFormInModalDialog(navigationItem, navigationContext);
+                handler.openFormInModalDialog(navigationItem, navigationContext, self);
                 break;
             }
 
@@ -209,15 +294,15 @@ function NavigationController(handler) {
         registerContext(navigationContext);
         var lastItem = navigationContext.getLastNavigationItem();
         if (!isNewContext && replaceCurrentItem && lastItem) {
-            if (handler.closeCurrentForm(navigationContext)){
+            if (handler.closeCurrentForm(navigationContext)) {
                 navigationContext.removeLastNavigationItem();
             } else {
                 return false;
             }
         }
-        
+
         navigationContext.addNavigationItem(navigationItem);
-        
+
         try {
             openForm(navigationItem, navigationContext);
         } catch (e) {
@@ -250,7 +335,7 @@ function NavigationController(handler) {
         }
 
         var context = new scopes.svyNavigationModel.NavigationContext(contextType);
-        if (openInContext(navigationItem, context, true, false, addToRecentList)){
+        if (openInContext(navigationItem, context, true, false, addToRecentList)) {
             return context;
         }
         return null;
@@ -309,13 +394,14 @@ function NavigationController(handler) {
             isNewContext = true;
         }
 
-        if (openInContext(navigationItem, contextToUse, isNewContext, replaceCurrentItem, addToRecentList)){
+        if (openInContext(navigationItem, contextToUse, isNewContext, replaceCurrentItem, addToRecentList)) {
             return contextToUse;
         }
         return null;
     }
 
     /**
+     * @public
      * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
      * @return {Boolean}
      */
@@ -328,15 +414,71 @@ function NavigationController(handler) {
             throw new Error('The specified navigation context is not managed by this navigation controller');
         }
 
+        var lastNavItem = navigationContext.getLastNavigationItem();
+        var closeCallbackInfo = lastNavItem.getCloseCallbackInfo();
         var res = handler.closeCurrentForm(navigationContext);
         if (res) {
             navigationContext.removeLastNavigationItem();
             var nextNavItem = navigationContext.getLastNavigationItem();
             if (nextNavItem) {
                 openForm(nextNavItem, navigationContext);
+            } else {
+                if (handler.closeContext(navigationContext)) {
+                    unregisterContext(navigationContext);
+                }
+            }
+            if (closeCallbackInfo && closeCallbackInfo.qualifiedMethodName) {
+                //the qualified method name should be forms.formname.methodname or scopes.scopename.methodname
+                var parts = closeCallbackInfo.qualifiedMethodName.split('.');
+                if (parts.length == 3){
+                    var mthd = null;
+                    switch (parts[0]) {
+                        case 'forms': {
+                            mthd = forms[parts[1]][parts[2]];
+                            break;
+                        }
+                        case 'scopes': {
+                            mthd = scopes[parts[1]][parts[2]];
+                            break;
+                        }
+                    
+                        default: {
+                            application.output('Invalid qualified method name for close callback: ' + closeCallbackInfo.qualifiedMethodName);
+                            break;
+                        }
+                    }
+                    if (mthd) {
+                        //need to do this with a job because the close request may have been initiated from the form which is being closed
+                        plugins.scheduler.addJob(application.getUUID().toString(),application.getServerTimeStamp(), mthd, [lastNavItem, closeCallbackInfo.arg]);
+                    }
+                }
             }
         }
 
         return res;
+    }
+
+    /**
+     * @public
+     * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+     * @return {Boolean}
+     */
+    this.closeContext = function(navigationContext) {
+        if (!navigationContext) {
+            throw new Error('navigationContext is not specified');
+        }
+
+        if (!self.contextIsRegistered(navigationContext)) {
+            throw new Error('The specified navigation context is not managed by this navigation controller');
+        }
+
+        var res = false;
+        while (navigationContext.hasNavigationItems()) {
+            res = this.closeCurrentForm(navigationContext);
+            if (!res) {
+                return res;
+            }
+        }
+        return true;
     }
 }

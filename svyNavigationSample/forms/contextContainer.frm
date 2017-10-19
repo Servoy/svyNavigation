@@ -1,5 +1,5 @@
 customProperties:"formComponent:false",
-encapsulation:60,
+encapsulation:44,
 items:[
 {
 anchors:11,
@@ -20,7 +20,7 @@ uuid:"B80EE20A-9309-415B-B3D0-815E795696A6"
 anchors:3,
 location:"342,9",
 name:"btnClose",
-onActionMethodID:"-1",
+onActionMethodID:"A16B7B7D-513A-4220-AA2B-3893023CAF56",
 size:"52,24",
 text:"Close",
 typeid:7,
