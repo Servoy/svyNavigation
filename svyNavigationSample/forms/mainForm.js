@@ -242,15 +242,15 @@ function onMenuItemSelected(menuItemId, event) {
     var navItem = new scopes.svyNavigationModel.NavigationItem(formInstanceId, data.text);
     switch (data.containerType) {
         case 'tab': {
-            scopes.svyNavigation.openInNewStandardContext(navItem, true);
+            scopes.svyNavigation.openInNewStandardContext(navItem);
             break;
         }
         case 'dialog': {
-            scopes.svyNavigation.openInNewDialogContext(navItem, false, true);
+            scopes.svyNavigation.openInNewDialogContext(navItem, false);
             break;
         }
         case 'modalDialog': {
-            scopes.svyNavigation.openInNewDialogContext(navItem, true, true);
+            scopes.svyNavigation.openInNewDialogContext(navItem, true);
             break;
         }
 
