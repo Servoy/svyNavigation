@@ -252,14 +252,6 @@ function NavigationController(handler) {
     /**
      * @private
      * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
-     */
-    function addItemToRecentList(navigationItem) {
-        //TODO: implement this
-    }
-
-    /**
-     * @private
-     * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
      * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
      */
     function openForm(navigationItem, navigationContext) {
@@ -289,10 +281,9 @@ function NavigationController(handler) {
      * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
      * @param {Boolean} isNewContext
      * @param {Boolean} replaceCurrentItem
-     * @param {Boolean} [addToRecentList]
      * @return {Boolean}
      */
-    function openInContext(navigationItem, navigationContext, isNewContext, replaceCurrentItem, addToRecentList) {
+    function openInContext(navigationItem, navigationContext, isNewContext, replaceCurrentItem) {
         //Note: the context should be updated BEFORE opening the form in case the handler needs to use the new information (e.g. to display correct breadcrumbs info)
         registerContext(navigationContext);
         var lastItem = navigationContext.getLastNavigationItem();
@@ -319,26 +310,22 @@ function NavigationController(handler) {
             throw e;
         }
 
-        if (addToRecentList) {
-            addItemToRecentList(navigationItem);
-        }
         return true;
     }
 
     /**
      * @public
      * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
-     * @param {Boolean} [addToRecentList]
      * @return {scopes.svyNavigationModel.NavigationContext} The context in which the item was opened or null if the item could not be opened.
      */
-    this.openInNewStandardContext = function(navigationItem, addToRecentList) {
+    this.openInNewStandardContext = function(navigationItem) {
         var contextType = scopes.svyNavigationModel.NavigationContextType.Standard;
         if (m_ModalDialogContexts.length > 0) {
             contextType = scopes.svyNavigationModel.NavigationContextType.ModalDialog;
         }
 
         var context = new scopes.svyNavigationModel.NavigationContext(contextType);
-        if (openInContext(navigationItem, context, true, false, addToRecentList)) {
+        if (openInContext(navigationItem, context, true, false)) {
             return context;
         }
         return null;
@@ -348,17 +335,16 @@ function NavigationController(handler) {
      * @public
      * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
      * @param {Boolean} useModalDialog
-     * @param {Boolean} [addToRecentList]
      * @return {scopes.svyNavigationModel.NavigationContext} The context in which the item was opened or null if the item could not be opened.
      */
-    this.openInNewDialogContext = function(navigationItem, useModalDialog, addToRecentList) {
+    this.openInNewDialogContext = function(navigationItem, useModalDialog) {
         var contextType = scopes.svyNavigationModel.NavigationContextType.Dialog;
         if (useModalDialog || (m_ModalDialogContexts.length > 0)) {
             contextType = scopes.svyNavigationModel.NavigationContextType.ModalDialog;
         }
 
         var context = new scopes.svyNavigationModel.NavigationContext(contextType);
-        if (openInContext(navigationItem, context, true, false, addToRecentList)) {
+        if (openInContext(navigationItem, context, true, false)) {
             return context;
         }
         return null;
@@ -369,10 +355,9 @@ function NavigationController(handler) {
      * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
      * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
      * @param {Boolean} [replaceCurrentItem]
-     * @param {Boolean} [addToRecentList]
      * @return {scopes.svyNavigationModel.NavigationContext} The context in which the item was opened or null if the item could not be opened. Note that the result context may be different from the specified input one.
      */
-    this.openInExistingContext = function(navigationContext, navigationItem, replaceCurrentItem, addToRecentList) {
+    this.openInExistingContext = function(navigationContext, navigationItem, replaceCurrentItem) {
         if (!navigationContext) {
             throw new Error('navigationContext is not specified');
         }
@@ -397,7 +382,7 @@ function NavigationController(handler) {
             isNewContext = true;
         }
 
-        if (openInContext(navigationItem, contextToUse, isNewContext, replaceCurrentItem, addToRecentList)) {
+        if (openInContext(navigationItem, contextToUse, isNewContext, replaceCurrentItem)) {
             return contextToUse;
         }
         return null;

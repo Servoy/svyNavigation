@@ -6,7 +6,7 @@
 var NavigationContextType = {
     Standard: 'STANDARD',
     Dialog: 'DIALOG',
-    ModalDialog: 'ModalDialog'
+    ModalDialog: 'MODAL_DIALOG'
 }
 
 /**
