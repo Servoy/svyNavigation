@@ -41,6 +41,10 @@ function validateContextType(contextType) {
  * @properties={typeid:24,uuid:"119DC666-543C-4DB7-BAB3-BCC5806AE834"}
  */
 function NavigationItem(formName, text, tooltipText) {
+    if(!formName || !utils.stringTrim(formName)){
+        throw new Error('Form name is not specified');
+    }
+    
     /**
      * @protected
      * @type {String}
@@ -239,6 +243,7 @@ function NavigationContext(contextType) {
         return null;
     }
     /**
+     * @public 
      * @param {NavigationItem} navItem
      */
     this.addNavigationItem = function(navItem) {

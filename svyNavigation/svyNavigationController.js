@@ -85,6 +85,7 @@ function validateNavigationHandler(handler) {
 
 /**
  * @constructor
+ * @public
  * @param {NavigationHandler} handler
  * @properties={typeid:24,uuid:"875F2A28-E3B1-4F7F-A023-50B207E78FA5"}
  */
