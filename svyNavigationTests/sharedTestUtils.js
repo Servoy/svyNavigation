@@ -76,3 +76,97 @@ function FunctionDescriptor(object, originalFunctionName, originalFunction, func
     this.functionToUse = functionToUse;
     this.originalFunctionName = originalFunctionName;
 }
+
+/**
+ * @constructor
+ * @public
+ *
+ * @properties={typeid:24,uuid:"7D1558A5-EB06-44EF-A01C-121FE6B3B586"}
+ */
+function MockupNavigationHandler() {
+    var m_CallLog = [];
+    var m_ReturnResult = true;
+    var m_ThrowError = false;
+    /**
+     * @public
+     */
+    this.resetTestState = function(){
+        m_CallLog = [];
+        m_ReturnResult = true;
+        m_ThrowError = false;
+    }
+    /**
+     * @public
+     * @return {Array<{methodName: String, args: Array}>}
+     */
+    this.getCallLog = function(){
+        return [].concat(m_CallLog);
+    }
+    /**
+     * @public
+     * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
+     * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+     * @param {scopes.svyNavigationController.NavigationController} navigationController
+     * @throws {Error} If the form could not be opened.
+     */
+    this.openFormInApplication = function(navigationItem, navigationContext, navigationController) {
+        m_CallLog.push({ methodName: 'openFormInApplication', args: [navigationItem, navigationContext, navigationController] });
+        if (m_ThrowError) {
+            throw new Error('unit test error');
+        }
+    }
+    /**
+     * @public
+     * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
+     * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+     * @param {scopes.svyNavigationController.NavigationController} navigationController
+     * @throws {Error} If the form could not be opened.
+     */
+    this.openFormInDialog = function(navigationItem, navigationContext, navigationController) {
+        m_CallLog.push({ methodName: 'openFormInDialog', args: [navigationItem, navigationContext, navigationController] });
+        if (m_ThrowError) {
+            throw new Error('unit test error');
+        }
+    }
+    /**
+     * @public
+     * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
+     * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+     * @param {scopes.svyNavigationController.NavigationController} navigationController
+     * @throws {Error} If the form could not be opened.
+     */
+    this.openFormInModalDialog = function(navigationItem, navigationContext, navigationController) {
+        m_CallLog.push({ methodName: 'openFormInModalDialog', args: [navigationItem, navigationContext, navigationController] });
+        if (m_ThrowError) {
+            throw new Error('unit test error');
+        }
+    }
+
+    /**
+     * Closes the current/active form which is loaded in the specified context.
+     * @public
+     * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+     * @return {Boolean}
+     */
+    this.closeCurrentForm = function(navigationContext) {
+        m_CallLog.push({ methodName: 'closeCurrentForm', args: [navigationContext] });
+        if (m_ThrowError) {
+            throw new Error('unit test error');
+        }
+        return m_ReturnResult;
+    }
+
+    /**
+     * Closes the specified context along with all forms currently opened in it.
+     * @public
+     * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
+     * @return {Boolean}
+     */
+    this.closeContext = function(navigationContext) {
+        m_CallLog.push({ methodName: 'closeContext', args: [navigationContext] });
+        if (m_ThrowError) {
+            throw new Error('unit test error');
+        }
+        return m_ReturnResult;
+    }
+}
