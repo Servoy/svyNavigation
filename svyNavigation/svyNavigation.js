@@ -1,165 +1,407 @@
 /**
- * @private
- * @type {scopes.svyNavigationController.NavigationController}
- * @properties={typeid:35,uuid:"96C122F1-9CFF-4D34-BF10-56FC7E14496D",variableType:-4}
+ * @public 
+ * @enum 
+ * @properties={typeid:35,uuid:"564021D4-081B-4FE5-8FE4-FF2585815D29",variableType:-4}
  */
-var m_DefaultNavController = null;
-/**
- * @public
- * @param {scopes.svyNavigationController.NavigationHandler} handler
- *
- * @properties={typeid:24,uuid:"B9ACF2EB-0406-4DC4-9E62-EFC408DEA643"}
- */
-function initializeDefaultController(handler) {
-    m_DefaultNavController = new scopes.svyNavigationController.NavigationController(handler);
-}
+var NAVIGATION_EVENT = {
+	BEFORE_CLOSE: 'before-close',
+	AFTER_OPEN: 'after-open'
+};
 
 /**
- * @public
- * @return {scopes.svyNavigationController.NavigationController}
- * @properties={typeid:24,uuid:"D115545B-AEFD-4AFA-B95D-4BF0C85CA99C"}
+ * @private 
+ * @type {Array<Function>}
+ * @properties={typeid:35,uuid:"81D3643A-CACA-4109-9308-F219E9F2CDC0",variableType:-4}
  */
-function getDefaultController() {
-    return m_DefaultNavController;
-}
+var listeners = [];
+
 
 /**
- * @public
+ * @private 
+ * @type {Array<NavigationItem>}
+ * @properties={typeid:35,uuid:"C8BA50D6-E824-477C-A20E-601C2889D0B8",variableType:-4}
+ */
+var items = [];
+
+/**
+ * Opens the navigation item. 
+ * If the item already exists in the stack, then all items after the specified item are closed
+ * beforeClose event will be fired allowing a chance to rect or cancel
+ * afterOpen will fire allowing UIs to update
+ * 
+ * @public 
+ * @param {NavigationItem|String} itemOrID
  * @return {Boolean}
- * @properties={typeid:24,uuid:"CAF4F8DE-5083-4301-849E-0944664C9A12"}
+ * @properties={typeid:24,uuid:"1210FE48-6A94-40DD-9BF4-B843044EA1ED"}
  */
-function hasDefaultController() {
-    return (m_DefaultNavController != null);
+function open(itemOrID){
+	
+	// look for existing item in nav stack
+	var id = itemOrID instanceof String ? itemOrID : itemOrID.getID();
+	var navItem = itemOrID instanceof NavigationItem ? itemOrID : null;
+	var index = items.length;
+	for(var i = 0; i < items.length; i++){
+		var item = items[i];
+		
+		// found item
+		// TODO Copy /  update item if it already existed, allow for mutation ?
+		if(item.getID() == id){
+			index = i;
+			navItem = item;
+			break;
+		}
+	}
+	
+	// Item ID not found in stack
+	if(!navItem){
+		// TODO log warning
+		return false;
+	}
+	
+	// before event
+	if(!beforeClose()){
+		// TODO log warning
+		return false;
+	}
+	
+	// trim stack
+	items = items.slice(0,index);
+	
+	// add item
+	items.push(navItem);
+	
+	// after event
+	afterOpen();
+	
+	return true;
 }
 
 /**
- * @private
- * @properties={typeid:24,uuid:"BEF8CA86-FEA6-4996-B90D-C73E55E76349"}
+ * @private 
+ * @param {NavigationItem|String} itemOrID
+ * @return {Number}
+ * @properties={typeid:24,uuid:"931CD229-352B-4840-A469-793A68A0EF64"}
  */
-function checkDefaultController() {
-    if (!hasDefaultController()) {
-        throw new Error('Default controller is not initialized');
+function indexOf(itemOrID){
+	var id = itemOrID instanceof String ? itemOrID : itemOrID.getID();
+	for (var i = 0; i < items.length; i++){
+		var item = items[i];
+		if(item.getID() == id){
+			return i;
+		}
+	}
+	return -1;
+}
+
+/**
+ * Closes current navigation item and opens the previous item
+ * @public 
+ * @return {Boolean}
+ * @properties={typeid:24,uuid:"2F17EE08-7E2D-4559-9C53-53D50612A8FB"}
+ */
+function close(){
+	
+	// get previous item
+	var item = items[items.length - 2];
+	
+	// No previous item
+	if(!item){
+		// TODO log warning
+		return false;
+	}
+	
+	// open item
+	return open(item);
+}
+
+/**
+ * @public 
+ * @param {NavigationItem} navigationItem
+ * @return {Boolean}
+ * @properties={typeid:24,uuid:"2E121717-BF41-45FB-A7A0-86C384EC2359"}
+ */
+function reset(navigationItem){
+	
+	// before event
+	if(!beforeClose()){
+		// TODO log warning
+		return false;
+	}
+	
+	// reset to item
+	items = [navigationItem];
+	
+	// after event
+	afterOpen();
+	
+	return true;
+}
+
+/**
+ * @public 
+ * @return {Array<NavigationItem>}
+ * @properties={typeid:24,uuid:"37235352-825E-4881-8E35-78A52A467961"}
+ */
+function getNavigationItems(){
+	var a = [];
+	for(var i in items){
+		a.push(items[i]);
+	}
+	return a;
+}
+
+/**
+ * @public 
+ * @param {String} id
+ * @return {NavigationItem}
+ * @properties={typeid:24,uuid:"73F69D5E-6708-4937-AE3D-ACBC5C620A89"}
+ */
+function getNavigationItem(id){
+	// TODO consider making a map for performance improvement
+	for(var i in items){
+		var item = items[i];
+		if(item.getID() == id){
+			return item;
+		}
+	}
+	return null;
+}
+/**
+ * @public 
+ * @return {NavigationItem}
+ * @properties={typeid:24,uuid:"0BAAECA1-12F7-4EDF-B27B-12502A00F940"}
+ */
+function getCurrentItem(){
+	return items[items.length-1];
+}
+
+/**
+ * @public 
+ * @param {NavigationItem|String} itemOrID
+ * @return {Boolean}
+ * @properties={typeid:24,uuid:"A9618AEE-8091-49D1-B838-EAC9CFDC7CCB"}
+ */
+function hasItem(itemOrID){
+	return indexOf(itemOrID) >= 0;
+}
+
+/**
+ * @public 
+ * @param {Function} listener
+ *
+ * @properties={typeid:24,uuid:"04A23E5B-4EC6-4E24-BAB1-AA9CAF0A8169"}
+ */
+function addNavigationListener(listener){
+	listeners.push(listener);
+}
+/**
+ * @public 
+ * @param {Function} listener
+ *
+ * @properties={typeid:24,uuid:"E5011D75-223B-40AA-A4A0-79C4A13CB464"}
+ */
+function removeNavigationListener(listener){
+	
+}
+
+/**
+ * @private 
+ * @return {Boolean}
+ * @properties={typeid:24,uuid:"914C25FC-8CA0-4B8E-B399-624FED29A6EC"}
+ */
+function beforeClose(){
+	return fireEvent(NAVIGATION_EVENT.BEFORE_CLOSE,getCurrentItem());
+}
+/**
+ * @private 
+ * @properties={typeid:24,uuid:"6E9FD4C0-BD9C-4257-80F3-677953F8ACE6"}
+ */
+function afterOpen(){
+	fireEvent(NAVIGATION_EVENT.AFTER_OPEN,getCurrentItem());
+}
+
+/**
+ * @private 
+ * @param {String} eventType
+ * @param {NavigationItem} [item]
+ * @return {Boolean}
+ *
+ * @properties={typeid:24,uuid:"CFB73B7E-56EB-4FBD-B48F-F8BA4C312B0B"}
+ */
+function fireEvent(eventType, item){
+	var event = new NavigationEvent(eventType,item);
+	for(var i in listeners){
+		/** @type {Function} */
+		var listener = listeners[i];
+		var result = listener.call(this,event);
+		if(eventType == NAVIGATION_EVENT.BEFORE_CLOSE){
+			if(result === false){
+				return false;
+			}
+		}
+	}
+	return true;
+}
+/**
+ * @constructor
+ * @private 
+ * @param {String} eventType
+ * @param {NavigationItem} [item]
+ * @properties={typeid:24,uuid:"B809ACA1-1541-4A8B-A0F7-0557C2034248"}
+ */
+function NavigationEvent(eventType, item){
+	
+	/**
+	 * @public 
+	 * @return {String}
+	 */
+	this.getEventType = function(){
+		return eventType;
+	}
+	
+	/**
+	 * @public 
+	 * @return {NavigationItem}
+	 */
+	this.getNavigationItem = function(){
+		return item;
+	}
+}
+
+/**
+ * @constructor
+ * @public  
+ * @param {String} formName
+ * @param {String} [text]
+ * @param {String} [tooltipText]
+ * @properties={typeid:24,uuid:"2280FA71-A862-4C29-943A-57DA126FFB0D"}
+ */
+function NavigationItem(formName, text, tooltipText) {
+    if(!formName || !utils.stringTrim(formName)){
+        throw new Error('Form name is not specified');
     }
+    
+    /**
+     * @protected
+     * @type {String}
+     * @ignore
+     */
+    this.id = application.getUUID().toString();
+    
+    /**
+     * @protected
+     * @type {String}
+     * @ignore
+     */
+    this.m_FormName = formName;
+    /**
+     * @protected
+     * @type {String}
+     * @ignore
+     */
+    this.m_Text = text ? text : formName;
+    /**
+     * @protected
+     * @type {String}
+     * @ignore
+     */
+    this.m_TooltipText = tooltipText ? tooltipText : this.m_Text;
+    /**
+     * @protected
+     * @type {*}
+     * @ignore
+     */
+    this.m_CustomData = null;
 }
 
 /**
- * @public
- * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
- * @return {scopes.svyNavigationModel.NavigationContext} The context in which the item was opened or null if the item could not be opened.
- *
- * @properties={typeid:24,uuid:"B0F44D40-5AA6-4A1A-8DEF-A8A8A4522952"}
+ * Extends the NavigationItem prototype by adding the necessary methods.
+ * Using this approach to minimize the memory footprint of the NavigationItem instances.
+ * @private
+ * @properties={typeid:24,uuid:"D50A8EE4-B680-4470-A1B1-1B21D2CA7285"}
  */
-function openInNewStandardContext(navigationItem) {
-    checkDefaultController();
-    return m_DefaultNavController.openInNewStandardContext(navigationItem);
+function setupNavigationItem() {
+    /**
+     * Gets the name of the form associated with this navigation item.
+     * @public
+     * @return {String}
+     */
+    NavigationItem.prototype.getFormName = function() {
+        return this.m_FormName;
+    };
+    /**
+     * Sets the name of the form associated with this navigation item.
+     * @public
+     * @param {String} formName
+     */
+    NavigationItem.prototype.setFormName = function(formName) {
+        if (!formName || !utils.stringTrim(formName)) {
+            throw new Error('FormName is not specified');
+        }
+        this.m_FormName = formName;
+    };
+    /**
+     * @public
+     * @return {String}
+     */
+    NavigationItem.prototype.getText = function() {
+        return this.m_Text;
+    };
+    /**
+     * @public
+     * @param {String} text
+     */
+    NavigationItem.prototype.setText = function(text) {
+        if (!text || !utils.stringTrim(text)) {
+            throw new Error('Text is not specified');
+        }
+        this.m_Text = text;
+    };
+    /**
+     * @public
+     * @return {String}
+     */
+    NavigationItem.prototype.getTooltipText = function() {
+        return this.m_TooltipText;
+    };
+    /**
+     * @public
+     * @return {String}
+     */
+    NavigationItem.prototype.getID = function() {
+        return this.id;
+    };
+    /**
+     * @public
+     * @param {String} tooltipText
+     */
+    NavigationItem.prototype.setTooltipText = function(tooltipText) {
+        this.m_TooltipText = tooltipText;
+    };
+    /**
+     * @public
+     * @return {*}
+     */
+    NavigationItem.prototype.getCustomData = function() {
+        return this.m_CustomData;
+    };
+    /**
+     * @public
+     * @param {*} customData
+     */
+    NavigationItem.prototype.setCustomData = function(customData) {
+        this.m_CustomData = customData;
+    };
 }
 
 /**
- * @public
- * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
- * @param {Boolean} useModalDialog
- * @return {scopes.svyNavigationModel.NavigationContext} The context in which the item was opened or null if the item could not be opened.
+ * Initializes the module.
+ * NOTE: This var must remain at the BOTTOM of the file.
+ * @private
+ * @SuppressWarnings (unused)
  *
- * @properties={typeid:24,uuid:"02A995B7-B181-483A-8D8F-9D45C17F2C78"}
+ * @properties={typeid:35,uuid:"73D3B2D7-093B-4C94-B13E-867D9923BE16",variableType:-4}
  */
-function openInNewDialogContext(navigationItem, useModalDialog) {
-    checkDefaultController();
-    return m_DefaultNavController.openInNewDialogContext(navigationItem, useModalDialog);
-}
-
-/**
- * @public
- * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
- * @param {scopes.svyNavigationModel.NavigationItem} navigationItem
- * @param {Boolean} [replaceCurrentItem]
- * @return {scopes.svyNavigationModel.NavigationContext} The context in which the item was opened or null if the item could not be opened. Note that the result context may be different from the specified input one.
- *
- * @properties={typeid:24,uuid:"DFF944D9-FAD1-41E8-B9B4-6B3EE1F74781"}
- */
-function openInExistingContext(navigationContext, navigationItem, replaceCurrentItem) {
-    checkDefaultController();
-    return m_DefaultNavController.openInExistingContext(navigationContext, navigationItem, replaceCurrentItem);
-}
-
-/**
- * @public
- * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
- * @return {Boolean}
- *
- * @properties={typeid:24,uuid:"EBF68ABA-12FB-49EA-97A4-3CF0A56D7565"}
- */
-function closeCurrentForm(navigationContext) {
-    checkDefaultController();
-    return m_DefaultNavController.closeCurrentForm(navigationContext);
-}
-
-/**
- * @public
- * @param {scopes.svyNavigationModel.NavigationContext} navigationContext
- * @return {Boolean}
- *
- * @properties={typeid:24,uuid:"64BAD5B8-D8AD-4F77-AD0C-9DACB2931214"}
- */
-function closeContext(navigationContext) {
-    checkDefaultController();
-    return m_DefaultNavController.closeContext(navigationContext);
-}
-
-/**
- * @public
- * @param {String} contextId
- * @return {scopes.svyNavigationModel.NavigationContext}
- *
- * @properties={typeid:24,uuid:"068683C6-FC60-4687-B06E-968C85458271"}
- */
-function getContextById(contextId) {
-    checkDefaultController();
-    return m_DefaultNavController.getContextById(contextId);
-}
-
-/**
- * @public
- * @param {scopes.svyNavigationModel.NavigationContext} context
- * @return {Boolean}
- *
- * @properties={typeid:24,uuid:"7543C2C8-205A-457E-B290-A8AD1AC7F28C"}
- */
-function contextIsRegistered(context) {
-    checkDefaultController();
-    return m_DefaultNavController.contextIsRegistered(context);
-}
-
-/**
- * @public
- * @param {String} formInstanceName
- * @return {scopes.svyNavigationModel.NavigationContext}
- *
- * @properties={typeid:24,uuid:"D617665A-7969-4223-9489-4D530C5A9369"}
- */
-function getFormInstanceContext(formInstanceName) {
-    checkDefaultController();
-    return m_DefaultNavController.getFormInstanceContext(formInstanceName);
-}
-
-/**
- * @public
- * @param {String} formInstanceName
- * @param {scopes.svyNavigationModel.NavigationContext} context
- *
- * @properties={typeid:24,uuid:"21030A0D-9185-4767-A7D2-5FC93CEE50C5"}
- */
-function registerFormInstance(formInstanceName, context) {
-    checkDefaultController();
-    return m_DefaultNavController.registerFormInstance(formInstanceName, context);
-}
-
-/**
- * @public
- * @param {String} formInstanceName
- *
- * @properties={typeid:24,uuid:"4E8256B8-E9CD-465A-BF13-7ABB9EE3DE82"}
- */
-function unregisterFormInstance(formInstanceName) {
-    checkDefaultController();
-    return m_DefaultNavController.unregisterFormInstance(formInstanceName);
-}
+var init = function() {
+    setupNavigationItem();
+}();
