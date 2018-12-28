@@ -8,12 +8,30 @@ var OPEN_EXISTING_ITEM_POLICY = {
     /**
      * Reset the stack of open item to the existing item. This the Default policy
      */
-    RESET_STACK: 'prevent-when-editing',
+    RESET_STACK: 'reset-stack',
 
     /**
      * Move the existing item to the top of the stack
      */
-    MOVE_TO_TOP_OF_STACK: 'allow-when-editing'
+    MOVE_TO_TOP_OF_STACK: 'move-to-top-of-stack'
+};
+
+/**
+ * Enumeration for the close item policy options which control how to update the stack when an item is closed.
+ * @public 
+ * @enum 
+ * @properties={typeid:35,uuid:"D76CD41B-B9C6-44A0-9EB4-E7BAD0FA6B25",variableType:-4}
+ */
+var CLOSE_ITEM_POLICY = {
+    /**
+     * Reset the stack of close item to the existing item. This the Default policy
+     */
+    RESET_STACK: 'reset-stack',
+
+    /**
+     * remove the close item only 
+     */
+    REMOVE_ITEM_ONLY: 'remove-item-only'
 };
 
 /**
@@ -66,7 +84,14 @@ function NavigationPolicies() {
     this.openExistingItemPolicy = OPEN_EXISTING_ITEM_POLICY.RESET_STACK;
     
     /**
-     * Sets the form hide policy.
+     * @protected
+     * @type {String}
+     * @ignore
+     */
+    this.closeItemPolicy = CLOSE_ITEM_POLICY.RESET_STACK;
+    
+    /**
+     * Sets the policy for opening an existing item
      * @public
      * @param {String} policy for the open item policy options which control how to update the stack when an existing item is open again. Must be one of the {@link OPEN_EXISTING_ITEM_POLICY} enumeration options.
      * @return {NavigationPolicies} This NavigationPolicies instance for call-chaining support.
@@ -83,6 +108,26 @@ function NavigationPolicies() {
      */
     this.getOpenExistingItemPolicy = function() {
         return this.openExistingItemPolicy;
+    }
+    
+    /**
+     * Sets the close item policy
+     * @public
+     * @param {String} policy for the close item policy options which control how to update the stack when an item is closed. Must be one of the {@link CLOSE_ITEM_POLICY} enumeration options.
+     * @return {NavigationPolicies} This NavigationPolicies instance for call-chaining support.
+     */
+    this.setCloseItemPolicy = function(policy) {
+        this.closeItemPolicy = policy;
+        return this;
+    }
+
+    /**
+     * Gets the current closeItemPolicy
+     * @public
+     * @return {String} The current close item policy as one of the {@link CLOSE_ITEM_POLICY} enumeration options.
+     */
+    this.getCloseItemPolicy = function() {
+        return this.closeItemPolicy;
     }
 }
 
@@ -197,24 +242,83 @@ function indexOf(itemOrID){
 
 /**
  * Closes current navigation item and opens the previous item
+ * @param {NavigationItem|String} [itemOrID]
+ * 
  * @public 
  * @return {Boolean}
  * @properties={typeid:24,uuid:"2F17EE08-7E2D-4559-9C53-53D50612A8FB"}
  */
-function close(){
+function close(itemOrID) {
+
+	var item; 
+	if (itemOrID) {	
+		
+		if (itemOrID instanceof String) {
+			/** @type {String} */
+			var id = itemOrID;
+			item = getNavigationItem(id)
+		} else {
+			item = itemOrID;
+		}
+		
+		// find the position of the item
+		var index = indexOf(itemOrID);
+		
+		// validate index position
+		if (index >= 0) {
+			if (index < 1 && navigationPolicies.getCloseItemPolicy() === CLOSE_ITEM_POLICY.RESET_STACK) {
+				// there is no previous item, cannot close
+				return false;
+			}
+		} else {	// cannot find the item to close
+			return false;
+		}
+		
+		// before event
+		if(!beforeClose(item)){
+			// TODO log warning
+			return false;
+		}
+		
+		var currentItem = getCurrentItem();
+		
+		// TODO does it make sense to have a remove policy which differs from OPEN_EXISTING_ITEM_POLICY !?!?
+		if (navigationPolicies.getCloseItemPolicy() === CLOSE_ITEM_POLICY.REMOVE_ITEM_ONLY) {
+			// remove only the navigation item
+			items.splice(index, 1);
+		} else {	// default navigation policy is CLOSE_ITEM_POLICY.RESET_STACK
+			// trim stack
+			items = items.slice(0, index - 1);
+		}
+		
+		// open the current item if the current item has been changed
+		var newCurrentItem = getCurrentItem();
+		if (newCurrentItem && newCurrentItem.getID() != currentItem.getID()) {
+			// open the currentItem since current item has changed
+			afterOpen();
+		}
+		
+		return true;
+	} else { // close the last item
 	
-	// get previous item
-	var item = items[items.length - 2];
-	
-	// No previous item
-	if(!item){
-		// TODO log warning
-		return false;
+		// get previous item
+		item = items[items.length - 2];
+		
+		// No previous item
+		if (!item) {
+			// TODO log warning
+			return false;
+		}
+
+		// FIXME it rely on th policy OPEN_EXISTING_ITEM_POLICY.RESET_STACK. It should handle other cases too.
+		// TODO does it make sense to have a remove policy which differs from OPEN_EXISTING_ITEM_POLICY !?!?
+		// open item
+		return open(item);
 	}
-	
-	// open item
-	return open(item);
+
+
 }
+
 
 /**
  * @public 
@@ -307,12 +411,14 @@ function removeNavigationListener(listener){
 }
 
 /**
+ * @param {NavigationItem} [item] the item being closed. If not specified close the current item
  * @private 
  * @return {Boolean}
  * @properties={typeid:24,uuid:"914C25FC-8CA0-4B8E-B399-624FED29A6EC"}
  */
-function beforeClose(){
-	return fireEvent(NAVIGATION_EVENT.BEFORE_CLOSE,getCurrentItem());
+function beforeClose(item){
+	if (!item) item = getCurrentItem();
+	return fireEvent(NAVIGATION_EVENT.BEFORE_CLOSE, item);
 }
 /**
  * @private 
