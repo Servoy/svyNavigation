@@ -1,4 +1,22 @@
 /**
+ * Enumeration for the open item policy options which control how to update the stack when an existing item is open again.
+ * @public
+ * @enum
+ * @properties={typeid:35,uuid:"BA4E1A5D-9B40-4C72-BDFA-EC8A3B753816",variableType:-4}
+ */
+var OPEN_EXISTING_ITEM_POLICY = {
+    /**
+     * Reset the stack of open item to the existing item. This the Default policy
+     */
+    RESET_STACK: 'prevent-when-editing',
+
+    /**
+     * Move the existing item to the top of the stack
+     */
+    MOVE_TO_TOP_OF_STACK: 'allow-when-editing'
+};
+
+/**
  * @public 
  * @enum 
  * @properties={typeid:35,uuid:"564021D4-081B-4FE5-8FE4-FF2585815D29",variableType:-4}
@@ -22,6 +40,86 @@ var listeners = [];
  * @properties={typeid:35,uuid:"C8BA50D6-E824-477C-A20E-601C2889D0B8",variableType:-4}
  */
 var items = [];
+
+/**
+ * Set the navigation policies when the 
+ * @type {NavigationPolicies}
+ * @private
+ * @properties={typeid:35,uuid:"87EF8EBF-9544-456E-B48E-A12AC6E6900D",variableType:-4}
+ */
+var navigationPolicies = createNavigationPolicies();
+
+/**
+ * Internal constructor. To create a new instance of the NavigationPolicies class use the method {@link createNavigationPolicies}.
+ * @classdesc This class encapsulates the various supported navigation policies.
+ * @protected 
+ * @constructor
+ * @properties={typeid:24,uuid:"DE6AB0B7-8695-4B46-9B2E-DE5D8BC8FFEB"}
+ */
+function NavigationPolicies() {
+
+    /**
+     * @protected
+     * @type {String}
+     * @ignore
+     */
+    this.openExistingItemPolicy = OPEN_EXISTING_ITEM_POLICY.RESET_STACK;
+    
+    /**
+     * Sets the form hide policy.
+     * @public
+     * @param {String} policy for the open item policy options which control how to update the stack when an existing item is open again. Must be one of the {@link OPEN_EXISTING_ITEM_POLICY} enumeration options.
+     * @return {NavigationPolicies} This NavigationPolicies instance for call-chaining support.
+     */
+    this.setOpenExistingItemPolicy = function(policy) {
+        this.openExistingItemPolicy = policy;
+        return this;
+    }
+
+    /**
+     * Gets the current openExistinItemPolicy
+     * @public
+     * @return {String} The current open existing item policy as one of the {@link OPEN_EXISTING_ITEM_POLICY} enumeration options.
+     */
+    this.getOpenExistingItemPolicy = function() {
+        return this.openExistingItemPolicy;
+    }
+}
+
+/**
+ * Factory method for creating {@link NavigationPolicies} objects.
+ * @public 
+ * @return {NavigationPolicies} The created {@link NavigationPolicies} object.
+ * 
+ * @example <pre>// create new navigation policies
+	var navPolicies = scopes.svyNavigation.createNavigationPolicies();
+	navPolicies.setOpenExistingItemPolicy(scopes.svyNavigation.OPEN_EXISTING_ITEM_POLICY.MOVE_TO_TOP_OF_STACK);
+	
+	// set navigation policies
+	scopes.svyNavigation.setNavigationPolicies(navPolicies);</pre>
+ * 
+ * @properties={typeid:24,uuid:"70ACC9D7-4FAD-419F-B89D-F0188E0A9724"}
+ */
+function createNavigationPolicies() {
+    return new NavigationPolicies();
+}
+
+/**
+ * Sets the navigation policies; is suggested to call this method at the onOpenSolution event to properly initialize the navigation
+ * @public 
+ * @param {NavigationPolicies} policies
+ * @example <pre>// create new navigation policies
+	var navPolicies = scopes.svyNavigation.createNavigationPolicies();
+	navPolicies.setOpenExistingItemPolicy(scopes.svyNavigation.OPEN_EXISTING_ITEM_POLICY.MOVE_TO_TOP_OF_STACK);
+	
+	// set navigation policies
+	scopes.svyNavigation.setNavigationPolicies(navPolicies);</pre>
+ * 
+ * @properties={typeid:24,uuid:"12D38DE2-1348-409F-9195-91FB875DF831"}
+ */
+function setNavigationPolicies(policies) {
+	navigationPolicies = policies;
+}
 
 /**
  * Opens the navigation item. 
@@ -64,8 +162,12 @@ function open(itemOrID){
 		return false;
 	}
 	
-	// trim stack
-	items = items.slice(0,index);
+	if (navigationPolicies.getOpenExistingItemPolicy() === OPEN_EXISTING_ITEM_POLICY.MOVE_TO_TOP_OF_STACK) {
+		items.splice(index, 1);
+	} else {	// default navigation policy is OPEN_EXISTING_ITEM_POLICY.RESET_STACK
+		// trim stack
+		items = items.slice(0,index);
+	}
 	
 	// add item
 	items.push(navItem);
