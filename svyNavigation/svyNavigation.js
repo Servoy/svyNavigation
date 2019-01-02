@@ -529,6 +529,25 @@ function NavigationItem(formName, text, tooltipText) {
  * @properties={typeid:24,uuid:"D50A8EE4-B680-4470-A1B1-1B21D2CA7285"}
  */
 function setupNavigationItem() {
+	
+    /**
+     * @public
+     */
+     NavigationItem.prototype.stringify = function() {
+    	 
+    	 /** @type {NavigationItem} */
+    	 var thisInstance = this;
+    	 
+         var json = new Object();
+         json.id = thisInstance.getID();
+         json.formName  = thisInstance.getFormName();
+         json.text = thisInstance.getText();
+         json.tooltipText = thisInstance.getTooltipText();
+         json.customData = thisInstance.getCustomData();
+         
+         return JSON.stringify(json);
+    };
+    
     /**
      * Gets the name of the form associated with this navigation item.
      * @public
