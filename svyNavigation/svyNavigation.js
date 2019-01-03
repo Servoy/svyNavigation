@@ -1,37 +1,27 @@
 /**
- * Enumeration for the open item policy options which control how to update the stack when an existing item is open again.
- * @public
- * @enum
- * @properties={typeid:35,uuid:"BA4E1A5D-9B40-4C72-BDFA-EC8A3B753816",variableType:-4}
- */
-var OPEN_EXISTING_ITEM_POLICY = {
-    /**
-     * Reset the stack of open item to the existing item. This the Default policy
-     */
-    RESET_STACK: 'reset-stack',
-
-    /**
-     * Move the existing item to the top of the stack
-     */
-    MOVE_TO_TOP_OF_STACK: 'move-to-top-of-stack'
-};
-
-/**
- * Enumeration for the close item policy options which control how to update the stack when an item is closed.
+ * Enumeration for navigation policy options which control how to update the stack of navigation item when an item is opened or closed.
  * @public 
  * @enum 
- * @properties={typeid:35,uuid:"D76CD41B-B9C6-44A0-9EB4-E7BAD0FA6B25",variableType:-4}
+ * @properties={typeid:35,uuid:"58A3FF05-89EB-403F-A003-D984BB984064",variableType:-4}
  */
-var CLOSE_ITEM_POLICY = {
+var NAVIGATION_POLICY = {
     /**
-     * Reset the stack of close item to the existing item. This the Default policy
+     * Opened NavigationItems are handled as a linear stack.
+     * You can compare the behavior of the linear navigation to the behavior of a breadcrumb.
+     * Whenever you open an item which is already in the stack, it will remove all the items in the stack in front of it.
+     * Whenever an item is closed {@link close(itemOrId)} all the items on top of it are removed.
+     * This is the Default policy
      */
-    RESET_STACK: 'reset-stack',
+    LINEAR: 'linear',
 
     /**
-     * remove the close item only 
+     * Opened NavigationItems are handled as a pile.
+     * You can compare the behavior of the concurrent navigation to the behavior of a tab panel.
+     * You can freely navigate and remove the items in the pile of Navigation Items without affecting other Navigation items (which you may have opened previously or subsequently)
+     * Whenever you open an item which is already in the pile, it will move the item on top of the pile and select it as currentItem.
+     * Whenever an item is closed {@link close(itemOrId)} it removes the single item regardless of it's position in the pile.
      */
-    REMOVE_ITEM_ONLY: 'remove-item-only'
+    CONCURRENT: 'concurrent'
 };
 
 /**
@@ -50,7 +40,6 @@ var NAVIGATION_EVENT = {
  * @properties={typeid:35,uuid:"81D3643A-CACA-4109-9308-F219E9F2CDC0",variableType:-4}
  */
 var listeners = [];
-
 
 /**
  * @private 
@@ -81,23 +70,16 @@ function NavigationPolicies() {
      * @type {String}
      * @ignore
      */
-    this.openExistingItemPolicy = OPEN_EXISTING_ITEM_POLICY.RESET_STACK;
+    this.navigationPolicy = NAVIGATION_POLICY.LINEAR;
     
     /**
-     * @protected
-     * @type {String}
-     * @ignore
-     */
-    this.closeItemPolicy = CLOSE_ITEM_POLICY.RESET_STACK;
-    
-    /**
-     * Sets the policy for opening an existing item
+     * Sets the navigation policy
      * @public
-     * @param {String} policy for the open item policy options which control how to update the stack when an existing item is open again. Must be one of the {@link OPEN_EXISTING_ITEM_POLICY} enumeration options.
+     * @param {String} policy options which control how to update the stack of navigation item when an item is opened or closed. Must be one of the {@link NAVIGATION_POLICY} enumeration options.
      * @return {NavigationPolicies} This NavigationPolicies instance for call-chaining support.
      */
-    this.setOpenExistingItemPolicy = function(policy) {
-        this.openExistingItemPolicy = policy;
+    this.setNavigationPolicy = function(policy) {
+        this.navigationPolicy = policy;
         return this;
     }
 
@@ -106,28 +88,8 @@ function NavigationPolicies() {
      * @public
      * @return {String} The current open existing item policy as one of the {@link OPEN_EXISTING_ITEM_POLICY} enumeration options.
      */
-    this.getOpenExistingItemPolicy = function() {
-        return this.openExistingItemPolicy;
-    }
-    
-    /**
-     * Sets the close item policy
-     * @public
-     * @param {String} policy for the close item policy options which control how to update the stack when an item is closed. Must be one of the {@link CLOSE_ITEM_POLICY} enumeration options.
-     * @return {NavigationPolicies} This NavigationPolicies instance for call-chaining support.
-     */
-    this.setCloseItemPolicy = function(policy) {
-        this.closeItemPolicy = policy;
-        return this;
-    }
-
-    /**
-     * Gets the current closeItemPolicy
-     * @public
-     * @return {String} The current close item policy as one of the {@link CLOSE_ITEM_POLICY} enumeration options.
-     */
-    this.getCloseItemPolicy = function() {
-        return this.closeItemPolicy;
+    this.getNavigationPolicy = function() {
+        return this.navigationPolicy;
     }
 }
 
@@ -207,9 +169,22 @@ function open(itemOrID){
 		return false;
 	}
 	
-	if (navigationPolicies.getOpenExistingItemPolicy() === OPEN_EXISTING_ITEM_POLICY.MOVE_TO_TOP_OF_STACK) {
+	if (navigationPolicies.getNavigationPolicy() === NAVIGATION_POLICY.CONCURRENT) {
+		// TODO i am moving the navigation item on top of the stack.. 
+		// would it make more sense to keep the order ot items in stack as is and track instead the index of the selected item ? 
 		items.splice(index, 1);
 	} else {	// default navigation policy is OPEN_EXISTING_ITEM_POLICY.RESET_STACK
+	
+		// close all the items in between
+		for (i = items.length-2; i > index; i++) {
+			// TODO what happens if some of the beforeClose has already returned true ?
+			// maybe we need an AFTER_CLOSE event which can be used to finalize the closed state: 
+			// e.g. AFTER_CLOSE you are now sure that the item have been closed, you can remove the item from the tabpanel UI.
+			if (!beforeClose(items[i])) {
+				return false;
+			}
+		}
+		
 		// trim stack
 		items = items.slice(0,index);
 	}
@@ -266,7 +241,8 @@ function close(itemOrID) {
 		
 		// validate index position
 		if (index >= 0) {
-			if (index < 1 && navigationPolicies.getCloseItemPolicy() === CLOSE_ITEM_POLICY.RESET_STACK) {
+			// TODO shall i allow to close the last item when navigation policy is concurrent !?
+			if (index < 1 && navigationPolicies.getNavigationPolicy() === NAVIGATION_POLICY.LINEAR) {
 				// there is no previous item, cannot close
 				return false;
 			}
@@ -283,7 +259,7 @@ function close(itemOrID) {
 		var currentItem = getCurrentItem();
 		
 		// TODO does it make sense to have a remove policy which differs from OPEN_EXISTING_ITEM_POLICY !?!?
-		if (navigationPolicies.getCloseItemPolicy() === CLOSE_ITEM_POLICY.REMOVE_ITEM_ONLY) {
+		if (navigationPolicies.getNavigationPolicy() === NAVIGATION_POLICY.CONCURRENT) {
 			// remove only the navigation item
 			items.splice(index, 1);
 		} else {	// default navigation policy is CLOSE_ITEM_POLICY.RESET_STACK
@@ -310,13 +286,9 @@ function close(itemOrID) {
 			return false;
 		}
 
-		// FIXME it rely on th policy OPEN_EXISTING_ITEM_POLICY.RESET_STACK. It should handle other cases too.
-		// TODO does it make sense to have a remove policy which differs from OPEN_EXISTING_ITEM_POLICY !?!?
-		// open item
+		// for linear navigation open item will close all the items in front of it
 		return open(item);
 	}
-
-
 }
 
 
