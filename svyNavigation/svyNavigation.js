@@ -6,6 +6,8 @@
  */
 var NAVIGATION_POLICY = {
     /**
+     * TODO should be renamed STACK ?
+     * 
      * Opened NavigationItems are handled as a linear stack.
      * You can compare the behavior of the linear navigation to the behavior of a breadcrumb.
      * Whenever you open an item which is already in the stack, it will remove all the items in the stack in front of it.
@@ -15,6 +17,8 @@ var NAVIGATION_POLICY = {
     LINEAR: 'linear',
 
     /**
+     * TODO should be called PILE ?
+     * 
      * Opened NavigationItems are handled as a pile.
      * You can compare the behavior of the concurrent navigation to the behavior of a tab panel.
      * You can freely navigate and remove the items in the pile of Navigation Items without affecting other Navigation items (which you may have opened previously or subsequently)
@@ -47,6 +51,24 @@ var listeners = [];
  * @properties={typeid:35,uuid:"C8BA50D6-E824-477C-A20E-601C2889D0B8",variableType:-4}
  */
 var items = [];
+
+/**
+ * TODO it can be used as a proper history stack. 
+ * Open items are pushed into the history stack.
+ * It could have 2 types of policies LINEAR, CONCURRENT. A linear policy could behave like a stack. 
+ * While concurrent policy would always add an open item on top of it (even if already exists in the stack, like browser history);
+ * Can implement similar method such
+ * - getHistory(): Navigationitems
+ * - resetHistory(itemOrIndex ?): Boolean
+ * - clearHistory(): Boolean
+ * - historyBack(): Boolean
+ * - historyForward(): Boolean
+ * 
+ * @private 
+ * @type {Array<NavigationItem>}
+ * @properties={typeid:35,uuid:"96297058-1B48-46D4-BFBF-103287F9F507",variableType:-4}
+ */
+var itemsHistory = [];
 
 /**
  * Set the navigation policies when the 
