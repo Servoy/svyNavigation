@@ -403,11 +403,18 @@ function addNavigationListener(listener){
 /**
  * @public 
  * @param {Function} listener
+ * @return {Boolean}
  *
  * @properties={typeid:24,uuid:"E5011D75-223B-40AA-A4A0-79C4A13CB464"}
  */
 function removeNavigationListener(listener){
-	
+	for (var i = 0; i < listeners.length; i++) {
+		if (listeners[i] === listener) {
+			listeners.splice(i, 1);
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
