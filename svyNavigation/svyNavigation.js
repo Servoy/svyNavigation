@@ -263,8 +263,8 @@ function close(itemOrID) {
 		
 		// validate index position
 		if (index >= 0) {
-			// TODO shall i allow to close the last item when navigation policy is concurrent !?
-			if (index < 1 && navigationPolicies.getNavigationPolicy() === NAVIGATION_POLICY.LINEAR) {
+			// TODO shall i allow to close the last item when navigation policy is concurrent or create a new policy !?
+			if (index < 1) {
 				// there is no previous item, cannot close
 				return false;
 			}
