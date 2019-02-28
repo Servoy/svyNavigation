@@ -1,0 +1,13 @@
+addEmptyValue:1,
+customProperties:"lazyLoading:false",
+dataProviderID1:"permission_name",
+displayValueType:12,
+name:"vls_svy_sec_console_NavitemPermissions",
+realValueType:12,
+relationName:"svy_sec_console_navitem_to_property_permissions",
+returnDataProviders:1,
+separator:" - ",
+showDataProviders:1,
+typeid:34,
+uuid:"696704E3-4C34-41D3-A3FA-71B8437C0EB5",
+valueListType:1

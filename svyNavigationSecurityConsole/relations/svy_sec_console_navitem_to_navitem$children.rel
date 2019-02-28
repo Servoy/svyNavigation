@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"mem:svy_navitem",
+items:[
+{foreignColumnName:"parent_navitem_id",primaryDataProviderID:"navitem_id",typeid:23,uuid:"C1B2C2D6-0F1F-426E-B3E5-A2865460EEAA"}
+],
+joinType:1,
+name:"svy_sec_console_navitem_to_navitem$children",
+primaryDataSource:"mem:svy_navitem",
+typeid:22,
+uuid:"088240EB-8C37-401C-93BA-8957276D0BF5"

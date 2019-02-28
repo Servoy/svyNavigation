@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/svy_security/svy_properties_permissions",
+items:[
+{foreignColumnName:"property_uuid",primaryDataProviderID:"property_uuid",typeid:23,uuid:"A1428BB5-C945-46A2-8F65-601112DB0E73"}
+],
+joinType:1,
+name:"svy_sec_console_navitem_to_property_permissions",
+primaryDataSource:"mem:svy_navitem",
+typeid:22,
+uuid:"C5FFACBE-9E38-44C8-AE31-2A67D1EC4CF5"
