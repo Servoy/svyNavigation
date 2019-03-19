@@ -77,6 +77,12 @@ var activeSolutionName = application.getSolutionName();
 var log = scopes.svyLogManager.getLogger('com.servoy.svynavigationsecurity');
 
 /**
+ * @private 
+ * @properties={typeid:35,uuid:"F40D4F7F-7BB8-4750-98C2-9F5073F7EADC",variableType:-4}
+ */
+var loadedInMemory = false;
+
+/**
  * Set the navigation security policies
  * @type {NavigationSecurityPolicies}
  * @private
@@ -223,6 +229,8 @@ function loadSecureNavigationItems() {
 	}
 	
 	dataset.createDataSource('svy_navitem');
+	
+	loadedInMemory = true;
 }
 
 /**
@@ -376,11 +384,11 @@ function createSecureNavigationItem(navItemID, formName, parentNavItemID, nameSp
 // TODO shall i extend NavigationItem or !?
 
 /**
+ * @constructor
  * @param {JSRecord<mem:svy_navitem>} record
  *
  * @extends {scopes.svyNavigation.NavigationItem}
  * @private
- * @constructor
  * @properties={typeid:24,uuid:"8A6FF330-552F-466F-9D52-6014A4E2161A"}
  */
 function SecureNavigationItem(record) {
@@ -424,6 +432,7 @@ function SecureNavigationItem(record) {
 }
 
 /**
+ * @constructor
  * @private
  * @properties={typeid:24,uuid:"0B42C1A5-03D2-4AD9-9D0F-8BBD1B5FFFFF"}
  */
@@ -480,12 +489,12 @@ function setupSecureNavigationItem() {
 	
 	
 	  /**
-     * Grants the specified permission to this role.
+     * Grants the specified permission to this navigation item.
      * Any users that are members of this role will be granted the permission.
      *
      * @public
      * @param {scopes.svySecurity.Permission|String} permission The permission object or name of permission to add.
-     * @return {SecureNavigationItem} This role for call-chaining support.
+     * @return {SecureNavigationItem} This navigation item for call-chaining support.
      */
 	SecureNavigationItem.prototype.addPermission = function(permission) {
 
@@ -499,7 +508,7 @@ function setupSecureNavigationItem() {
              * @private
              */
             var permissionName = permission instanceof String ? permission : permission.getName();
-            permission =scopes.svySecurity.getPermission(permissionName)
+            permission = scopes.svySecurity.getPermission(permissionName);
             if (!permission) {
                 throw 'Permission "' + permissionName + '" does not exist in system';
             }
@@ -523,11 +532,11 @@ function setupSecureNavigationItem() {
     }
 
     /**
-     * Checks if the specified permission is granted to this role.
+     * Checks if the specified permission is granted to this navigation item.
      *
      * @public
      * @param {scopes.svySecurity.Permission|String} permission The permission object or name of permission to check.
-     * @return {Boolean} True if the specified permission is granted to this role.
+     * @return {Boolean} True if the specified permission is granted to this navigation item.
      */
     SecureNavigationItem.prototype.hasPermission = function(permission) {
         if (!permission) {
@@ -538,11 +547,11 @@ function setupSecureNavigationItem() {
     }
 
     /**
-     * Removes the specified permission from this navitem.
+     * Removes the specified permission from this navigation item.
      *
      * @public
      * @param {scopes.svySecurity.Permission|String} permission The permission object or name of permission to remove.
-     * @return {SecureNavigationItem} This navitem for call-chaining support.
+     * @return {SecureNavigationItem} This navigation item for call-chaining support.
      */
     SecureNavigationItem.prototype.removePermission = function(permission) {
         if (!permission) {
@@ -552,13 +561,38 @@ function setupSecureNavigationItem() {
         property.removePermission(permission);
         return this;
     }
+    
+    
+    /**
+     * Checks if the logged user is granted permission to this navigation item
+     *
+     * @public
+     * @return {Boolean} True if the specified user is granted permission to this navigation item.
+     */
+    SecureNavigationItem.prototype.userHasPermission = function() {
+    	
+    	var user = scopes.svySecurity.getUser();
+    	if (!user) {
+            throw 'Logged user cannot be null';
+    	}
+    	
+    	// TODO can i improve such API !?
+    	var permissions = this.getPermissions();
+    	for (var i = 0; i < permissions.length; i++) {
+    		if (user.hasPermission(permissions[i])) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }    
 	
     /**
      * @param {SecureNavigationItem} secureNavItem 
      * @private */
     function getSecureProperty(secureNavItem) {
 		/** @type {JSRecord<mem:svy_navitem>} */
-		var record = this['record'];
+		var record = secureNavItem['record'];
 		var property = scopes.svySecurity.getSecureProperty(record.property_uuid);
 		if (!property) {
 			throw 'Navitem "' + record.property_uuid + '" does not exist in system';
