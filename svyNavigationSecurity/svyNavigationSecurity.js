@@ -226,6 +226,11 @@ function loadSecureNavigationItems() {
 		}
 		// set the navItemID
 		dataset.setValue(i, 2, itemNavID);
+		
+		// if no display name use the navItemID
+		if (!dataset.getValue(i, 6)) {
+			dataset.setValue(i, 6, itemNavID);
+		}
 	}
 	
 	dataset.createDataSource('svy_navitem');
