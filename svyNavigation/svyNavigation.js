@@ -313,7 +313,6 @@ function close(itemOrID) {
 	}
 }
 
-
 /**
  * @public 
  * @param {NavigationItem} navigationItem
@@ -394,6 +393,7 @@ function hasItem(itemOrID){
 function addNavigationListener(listener){
 	listeners.push(listener);
 }
+
 /**
  * @public 
  * @param {Function} listener
@@ -421,6 +421,7 @@ function beforeClose(item){
 	if (!item) item = getCurrentItem();
 	return fireEvent(NAVIGATION_EVENT.BEFORE_CLOSE, item);
 }
+
 /**
  * @private 
  * @properties={typeid:24,uuid:"6E9FD4C0-BD9C-4257-80F3-677953F8ACE6"}
@@ -480,15 +481,12 @@ function NavigationEvent(eventType, item){
 /**
  * @constructor
  * @public  
- * @param {String} formName
+ * @param {String} [formName]
  * @param {String} [text]
  * @param {String} [tooltipText]
  * @properties={typeid:24,uuid:"2280FA71-A862-4C29-943A-57DA126FFB0D"}
  */
 function NavigationItem(formName, text, tooltipText) {
-    if(!formName || !utils.stringTrim(formName)){
-        throw new Error('Form name is not specified');
-    }
     
     /**
      * @protected
@@ -502,30 +500,34 @@ function NavigationItem(formName, text, tooltipText) {
      * @type {String}
      * @ignore
      */
-    this.m_FormName = formName;
+    this.formName = formName;
+    
     /**
      * @protected
      * @type {String}
      * @ignore
      */
-    this.m_Text = text ? text : formName;
+    this.text = text ? text : formName;
+    
     /**
      * @protected
      * @type {String}
      * @ignore
      */
-    this.m_TooltipText = tooltipText ? tooltipText : this.m_Text;
+    this.tooltipText = tooltipText ? tooltipText : this.text;
+    
     /**
      * @protected
      * @type {*}
      * @ignore
      */
-    this.m_CustomData = null;
+    this.customData = null;
 }
 
 /**
  * Extends the NavigationItem prototype by adding the necessary methods.
  * Using this approach to minimize the memory footprint of the NavigationItem instances.
+ * @constructor
  * @private
  * @properties={typeid:24,uuid:"D50A8EE4-B680-4470-A1B1-1B21D2CA7285"}
  */
@@ -533,6 +535,7 @@ function setupNavigationItem() {
 	
     /**
      * @public
+     * @this {NavigationItem}
      */
      NavigationItem.prototype.stringify = function() {
     	 
@@ -553,72 +556,94 @@ function setupNavigationItem() {
      * Gets the name of the form associated with this navigation item.
      * @public
      * @return {String}
+     * @this {NavigationItem}
      */
     NavigationItem.prototype.getFormName = function() {
-        return this.m_FormName;
+        return this.formName;
     };
+    
     /**
      * Sets the name of the form associated with this navigation item.
      * @public
      * @param {String} formName
+     * @return {NavigationItem}
+     * @this {NavigationItem}
      */
     NavigationItem.prototype.setFormName = function(formName) {
         if (!formName || !utils.stringTrim(formName)) {
             throw new Error('FormName is not specified');
         }
-        this.m_FormName = formName;
+        this.formName = formName;
+        return this;
     };
+    
     /**
      * @public
      * @return {String}
+     * @this {NavigationItem}
      */
     NavigationItem.prototype.getText = function() {
-        return this.m_Text;
+        return this.text;
     };
+    
     /**
      * @public
      * @param {String} text
+     * @return {NavigationItem}
+     * @this {NavigationItem}
      */
     NavigationItem.prototype.setText = function(text) {
-        if (!text || !utils.stringTrim(text)) {
-            throw new Error('Text is not specified');
-        }
-        this.m_Text = text;
+        this.text = text;
+        return this;
     };
+    
     /**
      * @public
      * @return {String}
+     * @this {NavigationItem}
      */
     NavigationItem.prototype.getTooltipText = function() {
-        return this.m_TooltipText;
+        return this.tooltipText;
     };
+    
     /**
      * @public
      * @return {String}
+     * @this {NavigationItem}
      */
     NavigationItem.prototype.getID = function() {
         return this.id;
     };
+    
     /**
      * @public
      * @param {String} tooltipText
+     * @return {NavigationItem}
+     * @this {NavigationItem}
      */
     NavigationItem.prototype.setTooltipText = function(tooltipText) {
-        this.m_TooltipText = tooltipText;
+        this.tooltipText = tooltipText;
+        return this;
     };
+    
     /**
      * @public
      * @return {*}
+     * @this {NavigationItem}
      */
     NavigationItem.prototype.getCustomData = function() {
-        return this.m_CustomData;
+        return this.customData;
     };
+    
     /**
      * @public
      * @param {*} customData
+     * @return {NavigationItem}
+     * @this {NavigationItem}
      */
     NavigationItem.prototype.setCustomData = function(customData) {
-        this.m_CustomData = customData;
+        this.customData = customData;
+        return this;
     };
 }
 
