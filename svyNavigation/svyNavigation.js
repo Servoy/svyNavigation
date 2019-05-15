@@ -39,6 +39,15 @@ var NAVIGATION_EVENT = {
 };
 
 /**
+ * Maximium number of items in the navigation history (defaults to 100)
+ * @type {Number}
+ * @private 
+ *
+ * @properties={typeid:35,uuid:"DDE2AD7F-B03C-49C5-9881-6EC8DEFC268D",variableType:4}
+ */
+var MAX_HISTORY_LENGTH = 100;
+
+/**
  * @private 
  * @type {Array<Function>}
  * @properties={typeid:35,uuid:"81D3643A-CACA-4109-9308-F219E9F2CDC0",variableType:-4}
@@ -57,18 +66,24 @@ var items = [];
  * Open items are pushed into the history stack.
  * It could have 2 types of policies LINEAR, CONCURRENT. A linear policy could behave like a stack. 
  * While concurrent policy would always add an open item on top of it (even if already exists in the stack, like browser history);
- * Can implement similar method such
- * - getHistory(): Navigationitems
- * - resetHistory(itemOrIndex ?): Boolean
- * - clearHistory(): Boolean
- * - historyBack(): Boolean
- * - historyForward(): Boolean
  * 
  * @private 
  * @type {Array<NavigationItem>}
  * @properties={typeid:35,uuid:"96297058-1B48-46D4-BFBF-103287F9F507",variableType:-4}
  */
 var itemsHistory = [];
+
+/**
+ * When navigating through the history, this index is used
+ * Whenever a new navigation item is added while walking through history,
+ * this history stack is cut off (items after this index will be removed) 
+ * and the index is reset
+ * @private 
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"543C177C-5C58-4160-B8A5-61359A058CE2",variableType:4}
+ */
+var itemsHistoryIndex = -1;
 
 /**
  * Set the navigation policies when the 
@@ -161,62 +176,87 @@ function setNavigationPolicies(policies) {
  * @return {Boolean}
  * @properties={typeid:24,uuid:"1210FE48-6A94-40DD-9BF4-B843044EA1ED"}
  */
-function open(itemOrID){
-	
+function open(itemOrID) {
+	return openHandler(itemOrID);
+}
+
+/**
+ * Internal open handler accepts skipHistoryEntry parameter
+ * 
+ * @private  
+ * @param {NavigationItem|String} itemOrID
+ * @param {Boolean} [skipHistoryEntry] when true, no entry will be added to the history stack
+ * @return {Boolean}
+ * @properties={typeid:24,uuid:"808C5DC6-56D3-4429-B3B1-05D7A4C485C1"}
+ */
+function openHandler(itemOrID, skipHistoryEntry) {
+
 	// look for existing item in nav stack
 	var id = itemOrID instanceof String ? itemOrID : itemOrID.getID();
 	var navItem = itemOrID instanceof NavigationItem ? itemOrID : null;
 	var index = items.length;
-	for(var i = 0; i < items.length; i++){
+	for (var i = 0; i < items.length; i++) {
 		var item = items[i];
-		
+
 		// found item
 		// TODO Copy /  update item if it already existed, allow for mutation ?
-		if(item.getID() == id){
+		if (item.getID() == id) {
 			index = i;
 			navItem = item;
 			break;
 		}
 	}
-	
+
 	// Item ID not found in stack
-	if(!navItem){
+	if (!navItem) {
 		// TODO log warning
 		return false;
 	}
-	
+
 	// before event
 	if(!beforeClose()){
 		// TODO log warning
 		return false;
 	}
-	
+
 	if (navigationPolicies.getNavigationPolicy() === NAVIGATION_POLICY.CONCURRENT) {
-		// TODO i am moving the navigation item on top of the stack.. 
-		// would it make more sense to keep the order ot items in stack as is and track instead the index of the selected item ? 
+		// TODO i am moving the navigation item on top of the stack..
+		// would it make more sense to keep the order ot items in stack as is and track instead the index of the selected item ?
 		items.splice(index, 1);
 	} else {	// default navigation policy is OPEN_EXISTING_ITEM_POLICY.RESET_STACK
 	
 		// close all the items in between
 		for (i = items.length-2; i > index; i++) {
 			// TODO what happens if some of the beforeClose has already returned true ?
-			// maybe we need an AFTER_CLOSE event which can be used to finalize the closed state: 
+			// maybe we need an AFTER_CLOSE event which can be used to finalize the closed state:
 			// e.g. AFTER_CLOSE you are now sure that the item have been closed, you can remove the item from the tabpanel UI.
 			if (!beforeClose(items[i])) {
 				return false;
 			}
 		}
-		
+
 		// trim stack
-		items = items.slice(0,index);
+		items = items.slice(0, index);
 	}
-	
+
 	// add item
 	items.push(navItem);
-	
+	if (skipHistoryEntry !== true && itemsHistoryIndex !== -1) {
+		//we have been navigating through history, but now a new item is opened
+		//the new item is added at the current history index and the history is cut off at that point
+		itemsHistory.splice(itemsHistoryIndex + 1, itemsHistory.length - itemsHistoryIndex, navItem);
+		itemsHistoryIndex = -1;
+	} else if (skipHistoryEntry !== true) {
+		//we are not navigating through history, item is added to history
+		itemsHistory.push(navItem);
+		if (MAX_HISTORY_LENGTH !== -1 && itemsHistory.length > MAX_HISTORY_LENGTH) {
+			itemsHistory.shift();
+		}
+	}
+
 	// after event
 	afterOpen();
-	
+
 	return true;
 }
 
@@ -359,12 +399,30 @@ function getNavigationItem(id){
 	// TODO consider making a map for performance improvement
 	for(var i in items){
 		var item = items[i];
-		if(item.getID() == id){
+		if (item.getID() == id){
 			return item;
 		}
 	}
 	return null;
 }
+
+/**
+ * Returns the item with the given ID from the history stack when found and null otherwise
+ * @public 
+ * @param {String} id
+ * @return {NavigationItem}
+ * @properties={typeid:24,uuid:"63DBA653-9A7C-4583-82D6-A1A3DD9D69F4"}
+ */
+function getNavigationItemFromHistory(id){
+	for(var i in itemsHistory){
+		var item = itemsHistory[i];
+		if (item.getID() == id){
+			return item;
+		}
+	}
+	return null;
+}
+
 /**
  * @public 
  * @return {NavigationItem}
@@ -390,9 +448,9 @@ function hasItem(itemOrID){
  *
  * @properties={typeid:24,uuid:"04A23E5B-4EC6-4E24-BAB1-AA9CAF0A8169"}
  */
-function addNavigationListener(listener){
-	listeners.push(listener);
-}
+function addNavigationListener(listener) {
+		listeners.push(listener);
+	}
 
 /**
  * @public 
@@ -427,7 +485,7 @@ function beforeClose(item){
  * @properties={typeid:24,uuid:"6E9FD4C0-BD9C-4257-80F3-677953F8ACE6"}
  */
 function afterOpen(){
-	fireEvent(NAVIGATION_EVENT.AFTER_OPEN,getCurrentItem());
+	fireEvent(NAVIGATION_EVENT.AFTER_OPEN, getCurrentItem());
 }
 
 /**
@@ -438,20 +496,148 @@ function afterOpen(){
  *
  * @properties={typeid:24,uuid:"CFB73B7E-56EB-4FBD-B48F-F8BA4C312B0B"}
  */
-function fireEvent(eventType, item){
-	var event = new NavigationEvent(eventType,item);
-	for(var i in listeners){
+function fireEvent(eventType, item) {
+	var event = new NavigationEvent(eventType, item);
+	for (var i in listeners) {
 		/** @type {Function} */
 		var listener = listeners[i];
-		var result = listener.call(this,event);
-		if(eventType == NAVIGATION_EVENT.BEFORE_CLOSE){
-			if(result === false){
+		var result = listener.call(this, event);
+		if (eventType == NAVIGATION_EVENT.BEFORE_CLOSE) {
+			if (result === false) {
 				return false;
 			}
 		}
 	}
 	return true;
 }
+
+
+/**
+ * Returns the history of navigation items
+ * @public 
+ * @return {Array<NavigationItem>}
+ *
+ * @properties={typeid:24,uuid:"3ACE4E67-28CC-419D-A031-4944AA4A7809"}
+ */
+function getHistory() {
+	return itemsHistory;
+}
+
+/**
+ * Clears the history
+ * @public 
+ * @properties={typeid:24,uuid:"938BB658-5465-421D-A1C7-3FE835522B77"}
+ */
+function clearHistory() {
+	itemsHistory = [];
+}
+
+/**
+ * Goes back one step in the navigation history from the current position
+ * @return {NavigationItem}
+ * @public 
+ * @properties={typeid:24,uuid:"526F3087-9A7A-4540-AFD5-F069FDE8D6FA"}
+ */
+function historyBack() {
+	if (itemsHistory.length <= 1 || itemsHistoryIndex === 0) {
+		//nowhere to go back or we already sit on the first item
+		return null;
+	}
+	if (itemsHistoryIndex === -1) {
+		itemsHistoryIndex = itemsHistory.length - 1;
+	}
+	//reduce index by 1
+	itemsHistoryIndex --;
+	var historyItem = itemsHistory[itemsHistoryIndex];
+	//open previous item and return that
+	openHandler(historyItem, true);
+	return historyItem;
+}
+
+/**
+ * Goes forward one step in the navigation history from the current position
+ * @return {NavigationItem}
+ * @public
+ * @properties={typeid:24,uuid:"090823B5-6A79-4219-879A-789C0B8FA5EF"}
+ */
+function historyNext() {
+	if (itemsHistory.length <= 1 || itemsHistoryIndex === -1 || itemsHistoryIndex >= (itemsHistory.length - 1)) {
+		//nowhere to go to, we have not been through history at all or we already sit on the last item of the stack
+		return null;
+	}
+	//advance index by 1
+	itemsHistoryIndex ++;
+	var historyItem = itemsHistory[itemsHistoryIndex];
+	//open next item and return that
+	openHandler(historyItem, true);
+	return historyItem;
+}
+
+/**
+ * Returns <code>true</code> when a historyNext can be performed
+ * @return {Boolean}
+ * @public 
+ * @properties={typeid:24,uuid:"25CBB80E-C496-4703-A34D-6606C105028E"}
+ */
+function historyHasNext() {
+	return itemsHistoryIndex !== -1 && itemsHistoryIndex <= itemsHistory.length - 2;
+}
+
+/**
+ * Returns <code>true</code> when a historyBack can be performed
+ * @return {Boolean}
+ * @public 
+ * @properties={typeid:24,uuid:"4BFC6545-7B49-44EC-BC71-D108370A9029"}
+ */
+function historyHasPrevious() {
+	return !(itemsHistory.length <= 1 || itemsHistoryIndex === 0);
+}
+
+/**
+ * Returns the current index when navigating through the history or -1, when not navigating
+ * @return {Number}
+ * @public 
+ * @properties={typeid:24,uuid:"93410851-45D1-40C7-87E4-3C38FA26D978"}
+ */
+function getHistoryIndex() {
+	return itemsHistoryIndex;
+}
+
+/**
+ * Removes the given item from the history stack
+ * @param {NavigationItem} itemToRemove
+ *
+ * @properties={typeid:24,uuid:"53F01671-D8B2-48E5-B8F0-093A0E5733D1"}
+ */
+function removeItemFromHistory(itemToRemove) {
+	if (!itemToRemove) return;
+	for (var i = 0; i < itemsHistory.length; i++) {
+		if (itemsHistory[i].getID() === itemToRemove.getID()) {
+			itemsHistory.splice(i, 1);
+		}
+	}
+}
+
+/**
+ * Sets the maximum number of items held in the navigation history
+ * A maximum number of -1 means there is no limit to the number of items in the history
+ * @param {Number} historyLength
+ * @public 
+ *
+ * @properties={typeid:24,uuid:"5E5051CF-F74E-4FE4-A24B-414140E6C522"}
+ */
+function setMaxHistoryLength(historyLength) {
+	if (!(historyLength >= -1)) {
+		//nothing reasonable given
+		return;
+	}
+	MAX_HISTORY_LENGTH = historyLength;
+	if (historyLength !== -1 && itemsHistory.length > historyLength) {
+		//history already longer than given; remove from start what doesn't fit anymore
+		itemsHistory.splice(0, itemsHistory.length - historyLength);
+	}
+}
+
 /**
  * @constructor
  * @private 
@@ -488,7 +674,7 @@ function NavigationEvent(eventType, item){
  */
 function NavigationItem(formName, text, tooltipText) {
     
-    /**
+	/**
      * @protected
      * @type {String}
      * @ignore
@@ -537,12 +723,12 @@ function setupNavigationItem() {
      * @public
      * @this {NavigationItem}
      */
-     NavigationItem.prototype.stringify = function() {
+     NavigationItem.prototype.stringify = function() { 
     	 
     	 /** @type {NavigationItem} */
     	 var thisInstance = this;
     	 
-         var json = new Object();
+    	 var json = new Object();
          json.id = thisInstance.getID();
          json.formName  = thisInstance.getFormName();
          json.text = thisInstance.getText();
