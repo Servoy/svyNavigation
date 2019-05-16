@@ -214,19 +214,19 @@ function openHandler(itemOrID, skipHistoryEntry) {
 	}
 
 	// before event
-	if(!beforeClose()){
+	if (items.length > 0 && !beforeClose()) {
 		// TODO log warning
 		return false;
 	}
 
 	if (navigationPolicies.getNavigationPolicy() === NAVIGATION_POLICY.CONCURRENT) {
+		// remove this item from its current position and add it again at the top of the stack
 		// TODO i am moving the navigation item on top of the stack..
 		// would it make more sense to keep the order ot items in stack as is and track instead the index of the selected item ?
 		items.splice(index, 1);
-	} else {	// default navigation policy is OPEN_EXISTING_ITEM_POLICY.RESET_STACK
-	
-		// close all the items in between
-		for (i = items.length-2; i > index; i++) {
+	} else {
+		// close all the items in front of the re-opened item
+		for (i = items.length - 1; i > index; i--) {
 			// TODO what happens if some of the beforeClose has already returned true ?
 			// maybe we need an AFTER_CLOSE event which can be used to finalize the closed state:
 			// e.g. AFTER_CLOSE you are now sure that the item have been closed, you can remove the item from the tabpanel UI.
@@ -390,6 +390,7 @@ function getNavigationItems(){
 }
 
 /**
+ * Returns the item with the given ID from the items stack when found and null otherwise
  * @public 
  * @param {String} id
  * @return {NavigationItem}
@@ -449,8 +450,10 @@ function hasItem(itemOrID){
  * @properties={typeid:24,uuid:"04A23E5B-4EC6-4E24-BAB1-AA9CAF0A8169"}
  */
 function addNavigationListener(listener) {
+	if (listeners.indexOf(listener) === -1) {
 		listeners.push(listener);
 	}
+}
 
 /**
  * @public 
@@ -721,19 +724,16 @@ function setupNavigationItem() {
 	
     /**
      * @public
+     * 
      * @this {NavigationItem}
      */
      NavigationItem.prototype.stringify = function() { 
-    	 
-    	 /** @type {NavigationItem} */
-    	 var thisInstance = this;
-    	 
     	 var json = new Object();
-         json.id = thisInstance.getID();
-         json.formName  = thisInstance.getFormName();
-         json.text = thisInstance.getText();
-         json.tooltipText = thisInstance.getTooltipText();
-         json.customData = thisInstance.getCustomData();
+         json.id = this.getID();
+         json.formName  = this.getFormName();
+         json.text = this.getText();
+         json.tooltipText = this.getTooltipText();
+         json.customData = this.getCustomData();
          
          return JSON.stringify(json);
     };
