@@ -110,6 +110,7 @@ styleClass:"ag-theme-servoy",
 toolPanelConfig:{
 suppressColumnSelectAll:true,
 suppressRowGroups:true,
+suppressSideButtons:true,
 svyUUID:"B0929AD7-DC4A-4C09-B2E3-240F764BA18C"
 }
 },
@@ -139,6 +140,7 @@ uuid:"655636E6-0AF2-4C8E-8B99-DD5F6894BD22"
 },
 {
 cssPosition:"40,31,-1,361,-1,45",
+formIndex:1,
 json:{
 cssPosition:{
 bottom:"-1",
@@ -148,6 +150,7 @@ right:"31",
 top:"40",
 width:"-1"
 },
+formIndex:1,
 styleClass:"padding-left-10 border-bottom text-primary border-primary h2",
 text:"Supplier"
 },
