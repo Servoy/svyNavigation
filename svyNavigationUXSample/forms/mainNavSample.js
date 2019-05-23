@@ -46,6 +46,8 @@ function afterOpen(item) {
 	if (form && data && data.pks) {
 		
 		// TODO shall i select or search record by pk ?
-		scopes.svyDataUtils.selectRecordByPks(form.foundset, data.pks[0]);
+		scopes.svyDataUtils.loadRecords(form.foundset, data.pks);
+	} else if (form) {
+		form.foundset.loadAllRecords();
 	}
 }

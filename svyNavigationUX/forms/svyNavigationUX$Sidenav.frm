@@ -11,6 +11,7 @@ uuid:"1861205A-3EF1-4A70-B98F-E4C8381106FA"
 {
 cssPosition:"0,0,-1,0,0,50",
 json:{
+collapsing:true,
 cssPosition:{
 bottom:"-1",
 height:"50",
