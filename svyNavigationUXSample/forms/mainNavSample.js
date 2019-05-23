@@ -6,6 +6,8 @@
 function getMenuItems() {
 	var menuItems = [];
 	
+	var menuSubItem;
+	
 	/** @type {servoyextra-sidenav.MenuItem} */
 	var menuItem = new Object();
 	menuItem.id = "svyNavigationUX$Welcome";
@@ -27,27 +29,31 @@ function getMenuItems() {
 	menuItem.iconStyleClass = "fa fa-folder";
 	menuItems.push(menuItem);
 	
-	return menuItems;
-}
+	/** @type {servoyextra-sidenav.MenuItem} */
+	menuItem = new Object();
+	menuItem.id = scopes.svySecurityUX.SVY_SECURITY_UX.TENANT;
+	menuItem.text = "Security"
+	menuItem.iconStyleClass = "fa fa-shield";
+	
+	var menuSubItems = [];
+	
+	/** @type {servoyextra-sidenav.MenuItem} */
+	menuSubItem = new Object();
+	menuSubItem.id = scopes.svySecurityUX.SVY_SECURITY_UX.TENANT_ROLES;
+	menuSubItem.text = "Roles"
+	menuSubItem.iconStyleClass = "fa fa-user-shield";
+	menuSubItems.push(menuSubItem);
+	
+	/** @type {servoyextra-sidenav.MenuItem} */
+	menuSubItem = new Object();
+	menuSubItem.id = scopes.svySecurityUX.SVY_SECURITY_UX.TENANT_USERS;
+	menuSubItem.text = "Users"
+	menuSubItem.iconStyleClass = "fa fa-user-shield";
+	menuSubItems.push(menuSubItem);
+	
+	menuItem.menuItems = menuSubItems;
+	
+	menuItems.push(menuItem);
 
-/**
- * @param {scopes.svyNavigation.NavigationItem} item
- *
- * @properties={typeid:24,uuid:"05514045-B75F-405F-95C4-9013EE13DD45"}
- * @override
- */
-function afterOpen(item) {
-	_super.afterOpen(item);
-	
-	// TODO why not to move this into the core logic of svyNavItem as well as filter/search/sort or even foundset !?
-	var data = item.getCustomData();
-	
-	var form = forms[item.getFormName()];
-	if (form && data && data.pks) {
-		
-		// TODO shall i select or search record by pk ?
-		scopes.svyDataUtils.loadRecords(form.foundset, data.pks);
-	} else if (form) {
-		form.foundset.loadAllRecords();
-	}
+	return menuItems;
 }

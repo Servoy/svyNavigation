@@ -39,6 +39,36 @@ var NAVIGATION_EVENT = {
 };
 
 /**
+ * Enumeration
+ * @public 
+ * @enum 
+ * @properties={typeid:35,uuid:"D3C9A2CC-0D47-4BA4-88F1-BE35392E1E3C",variableType:-4}
+ */
+var NAVIGATION_SELECTION_TYPE = {
+	/**
+	 * This is the DEFAULT selection type.
+	 * Will run foundset.loadRecords(dataToShow) on the form to be shown.
+	 * */ 
+	LOAD_RECORDS: 'load-records',
+	
+	/** 
+	 * Can be used only when the dataToShow is a JSFoundSet
+	 * Will run controller.loadRecords(dataToShow)
+	 * */ 
+	SET_FOUNDSET: 'set-foundset',
+	
+	/** 
+	 * Can be used only when the dataToShow is a JSRecord
+	 * */ 
+	SELECT_RECORD: 'select-record',
+	
+	/** 
+	 * Can be used only when the dataToShow is a JSRecord
+	 * */ 
+	FORCE_SELECT_RECORD: 'force-select-record'
+}
+
+/**
  * Maximium number of items in the navigation history (defaults to 100)
  * @type {Number}
  * @private 
@@ -173,11 +203,32 @@ function setNavigationPolicies(policies) {
  * 
  * @public 
  * @param {NavigationItem|String} itemOrID
+ * @param {JSRecord|JSFoundSet|QBSelect} [dataToShow] The data to show for the given navigation item
+ * @param {String} [dataSelectionType] Determine how to handle the given dataToShow {@link NAVIGATION_SELECTION_TYPE} enumeration options. Default NAVIGATION_SELECTION_TYPE.LOAD_RECORDS
+ * 
  * @return {Boolean}
  * @properties={typeid:24,uuid:"1210FE48-6A94-40DD-9BF4-B843044EA1ED"}
  */
-function open(itemOrID) {
-	return openHandler(itemOrID);
+function open(itemOrID, dataToShow, dataSelectionType) {
+	
+	if (!dataToShow && dataSelectionType) {
+		throw new Error(utils.stringFormat('Cannot open item; dataSelectionType "%1$s" cannot be applied and dataToShow Undefined', [dataSelectionType]));
+	}
+	
+	// use default selection type
+	if (dataToShow && !dataSelectionType) dataSelectionType = NAVIGATION_SELECTION_TYPE.LOAD_RECORDS;
+	
+	// set foundset can be called on a JSFoundSet
+	if (!(dataToShow instanceof JSFoundSet) && dataSelectionType === NAVIGATION_SELECTION_TYPE.SET_FOUNDSET) {
+		throw new Error('Cannot open item; dataSelectionType SET_FOUNDSET can be used only for data of type JSFoundSet');
+	}
+	
+	// select record can be used only on data of type record
+	if (!(dataToShow instanceof JSRecord) && ( dataSelectionType === NAVIGATION_SELECTION_TYPE.SELECT_RECORD || dataSelectionType === NAVIGATION_SELECTION_TYPE.FORCE_SELECT_RECORD)) {
+		throw new Error("Cannot open item; dataSelectionType SELECT_RECORD or FORCE_SELECT_RECORD can be applied only for data of type JSRecord");
+	}
+	
+	return openHandler(itemOrID, null, dataToShow, dataSelectionType);
 }
 
 /**
@@ -186,10 +237,12 @@ function open(itemOrID) {
  * @private  
  * @param {NavigationItem|String} itemOrID
  * @param {Boolean} [skipHistoryEntry] when true, no entry will be added to the history stack
+ * @param {JSRecord|JSFoundSet|QBSelect} [dataToShow]
+ * @param {String} [dataSelectionType]
  * @return {Boolean}
  * @properties={typeid:24,uuid:"808C5DC6-56D3-4429-B3B1-05D7A4C485C1"}
  */
-function openHandler(itemOrID, skipHistoryEntry) {
+function openHandler(itemOrID, skipHistoryEntry, dataToShow, dataSelectionType) {
 
 	// look for existing item in nav stack
 	var id = itemOrID instanceof String ? itemOrID : itemOrID.getID();
@@ -255,7 +308,7 @@ function openHandler(itemOrID, skipHistoryEntry) {
 	}
 
 	// after event
-	afterOpen();
+	afterOpen(dataToShow, dataSelectionType);
 
 	return true;
 }
@@ -484,23 +537,27 @@ function beforeClose(item){
 }
 
 /**
+ * @param {JSRecord|JSFoundSet|QBSelect} [dataToShow]
+ * @param {String} [dataSelectionType]
  * @private 
  * @properties={typeid:24,uuid:"6E9FD4C0-BD9C-4257-80F3-677953F8ACE6"}
  */
-function afterOpen(){
-	fireEvent(NAVIGATION_EVENT.AFTER_OPEN, getCurrentItem());
+function afterOpen(dataToShow, dataSelectionType){
+	fireEvent(NAVIGATION_EVENT.AFTER_OPEN, getCurrentItem(), dataToShow, dataSelectionType);
 }
 
 /**
  * @private 
  * @param {String} eventType
  * @param {NavigationItem} [item]
+ * @param {JSRecord|JSFoundSet|QBSelect} [dataToShow]
+ * @param {String} [dataSelectionType]
  * @return {Boolean}
  *
  * @properties={typeid:24,uuid:"CFB73B7E-56EB-4FBD-B48F-F8BA4C312B0B"}
  */
-function fireEvent(eventType, item) {
-	var event = new NavigationEvent(eventType, item);
+function fireEvent(eventType, item, dataToShow, dataSelectionType) {
+	var event = new NavigationEvent(eventType, item, dataToShow, dataSelectionType);
 	for (var i in listeners) {
 		/** @type {Function} */
 		var listener = listeners[i];
@@ -646,9 +703,11 @@ function setMaxHistoryLength(historyLength) {
  * @private 
  * @param {String} eventType
  * @param {NavigationItem} [item]
+ * @param {JSRecord|JSFoundSet|QBSelect} [data]
+ * @param {String} [dataSelectionType]
  * @properties={typeid:24,uuid:"B809ACA1-1541-4A8B-A0F7-0557C2034248"}
  */
-function NavigationEvent(eventType, item){
+function NavigationEvent(eventType, item, data, dataSelectionType){
 	
 	/**
 	 * @public 
@@ -664,6 +723,21 @@ function NavigationEvent(eventType, item){
 	 */
 	this.getNavigationItem = function(){
 		return item;
+	}
+	
+	/**
+	 * @public 
+	 * @return {JSRecord|JSFoundSet|QBSelect}
+	 */
+	this.getDataToShow = function(){
+		return data;
+	}
+	/**
+	 * @public 
+	 * @return {String}
+	 */
+	this.getDataSelectionType = function(){
+		return dataSelectionType;
 	}
 }
 

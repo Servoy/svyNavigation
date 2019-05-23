@@ -89,58 +89,23 @@ function getActiveFormName() {
 }
 
 /**
- * @protected
- * @param {scopes.svyNavigation.NavigationItem} item
+ * @private
+ * @param {scopes.svyNavigation.NavigationEvent} event
  *
  * @properties={typeid:24,uuid:"EB547A09-C78E-462F-936D-21FB1E5675B4"}
  * @override
  */
-function afterOpen(item) {
+function onOpen(event) {
 
+	/** @type {scopes.svyNavigation.NavigationItem} */
+	var item = event.getNavigationItem();
 	var formName = item.getFormName();
-	//	var navPks = item.getPks();
-	//	var navFilters = item.getFilters();
-
+	
 	// get the form instance
 	var form = forms[formName];
 	if (!form) {
 		throw new scopes.svyExceptions.IllegalStateException('Cannot navigate to form because cannot find form instance ' + formName);
 	}
-
-	//	/** @type {JSFoundSet}  */
-	//	var formFoundset = form['foundset'];
-	//
-	//	// manage nav filters
-	//	var filtersUpdate = false;
-	//	var filterPrefix = "ips-navfilter-"; // use prefix for navigation filters so they can be distinguished from normal filters
-	//	var existingFilters = formFoundset.getFoundSetFilterParams();
-	//
-	//	// clean previous navigation filters
-	//	for (var i = 0; i < existingFilters.length; i++) {
-	//		/** @type {String} */
-	//		var existingFilterName = existingFilters[i][4];
-	//		if (existingFilterName && existingFilterName.substr(0, filterPrefix.length) == filterPrefix) {
-	//			if (!formFoundset.removeFoundSetFilterParam(existingFilterName)) {
-	//				throw new scopes.svyExceptions.IllegalStateException("IpsNavigation error: cannot remove foundset filter " + existingFilterName);
-	//			}
-	//			filtersUpdate = true;
-	//		}
-	//	}
-
-	//	// add new filters
-	//	for (i = 0; i < navFilters.length; i++) {
-	//		var navFilter = navFilters[i];
-	//		if (!formFoundset.addFoundSetFilterParam(navFilter.dataProvider, navFilter.operator, navFilter.value, navFilter.name)) {
-	//			throw new scopes.svyExceptions.IllegalStateException("IpsNavigation error: cannot add foundset filter " + navFilter.name);
-	//		}
-	//		filtersUpdate = true;
-	//	}
-	//
-	//	if (navPks && navPks.length) { // load pk if specified
-	//		scopes.svyDataUtils.loadRecords(formFoundset, navPks);
-	//	} else if (filtersUpdate) { // else reload filters if they have been updated
-	//		formFoundset.loadRecords();
-	//	}
 
 	// show form
 	elements.sidenav.containedForm = formName;

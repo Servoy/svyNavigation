@@ -71,6 +71,27 @@ json:{
 columns:[
 {
 autoResize:false,
+id:"set",
+styleClass:"fas fa-retweet",
+svyUUID:"374DAAAF-5FDA-452A-A8E9-03F59400088A",
+width:40
+},
+{
+autoResize:false,
+id:"load-record",
+styleClass:"fas fa-truck-loading",
+svyUUID:"646F74D5-B819-427B-9562-DD47681D7DB7",
+width:40
+},
+{
+autoResize:false,
+id:"load",
+styleClass:"fas fa-truck-loading text-success",
+svyUUID:"5313FDC8-2810-4174-8F0A-E9708B717C1F",
+width:40
+},
+{
+autoResize:false,
 enableResize:false,
 enableRowGroup:false,
 enableSort:false,
@@ -78,6 +99,13 @@ enableToolPanel:false,
 id:"link",
 styleClass:"fa fa-arrow-right",
 svyUUID:"59FE8C98-C060-47C0-9587-DC3D807B04AA",
+width:40
+},
+{
+autoResize:false,
+id:"force_select",
+styleClass:"fa fa-arrow-right text-success",
+svyUUID:"755876EC-AB19-4EC4-8786-FDE29504DEC1",
 width:40
 },
 {

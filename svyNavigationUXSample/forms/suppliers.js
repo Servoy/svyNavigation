@@ -14,14 +14,27 @@
  */
 function onCellClickProducts(foundsetindex, columnindex, record, event) {
 	var column = elements.tableProducts.getColumn(columnindex);
+	// navigate to the given product
+	var item = new scopes.svyNavigation.NavigationItem("products");
+	var productRecord = foundset.suppliers_to_products.getSelectedRecord();
+	
 	if (column.id === "link") {
-		
-		// navigate to the given product
-		var item = new scopes.svyNavigation.NavigationItem("products");
-		item.setCustomData({
-			pks: foundset.suppliers_to_products.getSelectedRecord().getPKs()
-		});
-		
-		scopes.svyNavigation.open(item);
+		scopes.svyNavigation.open(item, productRecord, scopes.svyNavigation.NAVIGATION_SELECTION_TYPE.SELECT_RECORD);
+	}
+	
+	if (column.id === "force") {
+		scopes.svyNavigation.open(item, productRecord, scopes.svyNavigation.NAVIGATION_SELECTION_TYPE.FORCE_SELECT_RECORD);
+	}
+	
+	if (column.id === "set") {
+		scopes.svyNavigation.open(item, foundset.suppliers_to_products, scopes.svyNavigation.NAVIGATION_SELECTION_TYPE.SET_FOUNDSET);
+	}
+	
+	if (column.id === "load-record") {
+		scopes.svyNavigation.open(item, productRecord, scopes.svyNavigation.NAVIGATION_SELECTION_TYPE.LOAD_RECORDS);
+	}
+	
+	if (column.id === "load") {
+		scopes.svyNavigation.open(item, foundset.suppliers_to_products, scopes.svyNavigation.NAVIGATION_SELECTION_TYPE.LOAD_RECORDS);
 	}
 }
