@@ -40,7 +40,6 @@ uuid:"A6DCC1E7-CDAF-4034-9362-549737F12CC2"
 {
 cssPosition:"50,0,0,0,-1,-1",
 json:{
-containedForm:"FACF6495-7E73-4C6E-8A95-6514FE0A79BB",
 cssPosition:{
 bottom:"0",
 height:"-1",
