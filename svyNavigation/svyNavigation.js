@@ -39,31 +39,44 @@ var NAVIGATION_EVENT = {
 };
 
 /**
- * Enumeration
+ * Enumeration for the data selection type specified in the open function. The Default value is LOAD_RECORDS
  * @public 
- * @enum 
+ * @enum
+ * @see open(itemOrId, dataToShow, dataSelectionType)
  * @properties={typeid:35,uuid:"D3C9A2CC-0D47-4BA4-88F1-BE35392E1E3C",variableType:-4}
  */
 var NAVIGATION_SELECTION_TYPE = {
 	/**
 	 * This is the DEFAULT selection type.
-	 * Will run foundset.loadRecords(dataToShow) on the form to be shown.
+	 * Will run foundset.loadRecords(dataToShow) on the form to be shown.<br/>
+	 * Load records into the form's foundset. If you load a relation into this foundset, then this foundset will not be a related foundset, 
+	 * it will not automatically update its state of records are updated or added that belong to that relation. 
+	 * It will only be a snapshot of that related foundsets state. 
+	 * Foundset filter params are copied over from the source foundset and are merged with the existing filters on this foundset.
 	 * */ 
 	LOAD_RECORDS: 'load-records',
 	
 	/** 
-	 * Can be used only when the dataToShow is a JSFoundSet
-	 * Will run controller.loadRecords(dataToShow)
+	 * Can be used only when the dataToShow is of type JSFoundSet.
+	 * Will run controller.loadRecords(dataToShow) for the target form.<br/>
+	 * Replace the default form's foundset with setting the (related) foundset into the form. The form will no longer share the default foundset with forms of the same datasource,
+	 * use loadAllRecords to restore the default foundset. This will really update the foundset instance itself of the form, so now existing foundset is altered just the new foundset is shown. 
+	 * When the form uses a seperate foundset, foundset filter params are copied over from the source foundset and are merged with the existing filters.
 	 * */ 
 	SET_FOUNDSET: 'set-foundset',
 	
 	/** 
-	 * Can be used only when the dataToShow is a JSRecord
+	 * Can be used only when the dataToShow is a JSRecord.
+	 * Selects the record with the given pk in the foundset even if the record is not loaded in foundset yet. 
+	 * <b>Warning</b>: can be very expensive, as the entire foundset may needs to be loaded. Returns false if the record cannot be found in the entire foundset. 
 	 * */ 
 	SELECT_RECORD: 'select-record',
 	
 	/** 
-	 * Can be used only when the dataToShow is a JSRecord
+	 * Can be used only when the dataToShow is a JSRecord.
+	 * Selects the record with the given pk in the foundset even if the record is not loaded in foundset yet. 
+	 * <b>Warning</b>: can be very expensive, as the entire foundset may needs to be loaded. Returns false if the record cannot be found in the entire foundset.
+	 * If the record is not present in the foundset will force the selection by loading all records into the foundset. If there are active foundset or table filters these won't be removed, they will still apply.
 	 * */ 
 	FORCE_SELECT_RECORD: 'force-select-record'
 }
@@ -204,7 +217,7 @@ function setNavigationPolicies(policies) {
  * @public 
  * @param {NavigationItem|String} itemOrID
  * @param {JSRecord|JSFoundSet|QBSelect} [dataToShow] The data to show for the given navigation item
- * @param {String} [dataSelectionType] Determine how to handle the given dataToShow {@link NAVIGATION_SELECTION_TYPE} enumeration options. Default NAVIGATION_SELECTION_TYPE.LOAD_RECORDS
+ * @param {String} [dataSelectionType] Determine the type of selection in the target navigation item with the given dataToShow {@link NAVIGATION_SELECTION_TYPE} enumeration options. Default NAVIGATION_SELECTION_TYPE.LOAD_RECORDS
  * 
  * @return {Boolean}
  * @properties={typeid:24,uuid:"1210FE48-6A94-40DD-9BF4-B843044EA1ED"}
