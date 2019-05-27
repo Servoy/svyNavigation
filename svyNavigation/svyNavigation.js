@@ -82,6 +82,7 @@ var NAVIGATION_SELECTION_TYPE = {
 }
 
 /**
+ * @deprecated 
  * Maximium number of items in the navigation history (defaults to 100)
  * @type {Number}
  * @private 
@@ -117,6 +118,7 @@ var items = [];
 var itemsHistory = [];
 
 /**
+ * @deprecated 
  * When navigating through the history, this index is used
  * Whenever a new navigation item is added while walking through history,
  * this history stack is cut off (items after this index will be removed) 
@@ -256,6 +258,11 @@ function open(itemOrID, dataToShow, dataSelectionType) {
  * @properties={typeid:24,uuid:"808C5DC6-56D3-4429-B3B1-05D7A4C485C1"}
  */
 function openHandler(itemOrID, skipHistoryEntry, dataToShow, dataSelectionType) {
+	
+	// make sure svyNavigationHistory scope is loaded when calling the open
+	if (!('svyNavigationHistory' in scopes)) {
+		scopes.svyNavigationHistory;
+	}
 
 	// look for existing item in nav stack
 	var id = itemOrID instanceof String ? itemOrID : itemOrID.getID();
@@ -305,20 +312,22 @@ function openHandler(itemOrID, skipHistoryEntry, dataToShow, dataSelectionType) 
 		items = items.slice(0, index);
 	}
 
-	// add item
+//	// add item
 	items.push(navItem);
-	if (skipHistoryEntry !== true && itemsHistoryIndex !== -1) {
-		//we have been navigating through history, but now a new item is opened
-		//the new item is added at the current history index and the history is cut off at that point
-		itemsHistory.splice(itemsHistoryIndex + 1, itemsHistory.length - itemsHistoryIndex, navItem);
-		itemsHistoryIndex = -1;
-	} else if (skipHistoryEntry !== true) {
-		//we are not navigating through history, item is added to history
-		itemsHistory.push(navItem);
-		if (MAX_HISTORY_LENGTH !== -1 && itemsHistory.length > MAX_HISTORY_LENGTH) {
-			itemsHistory.shift();
-		}
-	}
+	
+	// track history
+//	if (skipHistoryEntry !== true && itemsHistoryIndex !== -1) {
+//		//we have been navigating through history, but now a new item is opened
+//		//the new item is added at the current history index and the history is cut off at that point
+//		itemsHistory.splice(itemsHistoryIndex + 1, itemsHistory.length - itemsHistoryIndex, navItem);
+//		itemsHistoryIndex = -1;
+//	} else if (skipHistoryEntry !== true) {
+//		//we are not navigating through history, item is added to history
+//		itemsHistory.push(navItem);
+//		if (MAX_HISTORY_LENGTH !== -1 && itemsHistory.length > MAX_HISTORY_LENGTH) {
+//			itemsHistory.shift();
+//		}
+//	}
 
 	// after event
 	afterOpen(dataToShow, dataSelectionType);
@@ -474,6 +483,7 @@ function getNavigationItem(id){
 }
 
 /**
+ * @deprecated 
  * Returns the item with the given ID from the history stack when found and null otherwise
  * @public 
  * @param {String} id
@@ -586,6 +596,7 @@ function fireEvent(eventType, item, dataToShow, dataSelectionType) {
 
 
 /**
+ * @deprecated 
  * Returns the history of navigation items
  * @public 
  * @return {Array<NavigationItem>}
@@ -597,6 +608,7 @@ function getHistory() {
 }
 
 /**
+ * @deprecated 
  * Clears the history
  * @public 
  * @properties={typeid:24,uuid:"938BB658-5465-421D-A1C7-3FE835522B77"}
@@ -606,6 +618,7 @@ function clearHistory() {
 }
 
 /**
+ * @deprecated 
  * Goes back one step in the navigation history from the current position
  * @return {NavigationItem}
  * @public 
@@ -628,6 +641,7 @@ function historyBack() {
 }
 
 /**
+ * @deprecated 
  * Goes forward one step in the navigation history from the current position
  * @return {NavigationItem}
  * @public
@@ -647,6 +661,7 @@ function historyNext() {
 }
 
 /**
+ * @deprecated 
  * Returns <code>true</code> when a historyNext can be performed
  * @return {Boolean}
  * @public 
@@ -657,6 +672,7 @@ function historyHasNext() {
 }
 
 /**
+ * @deprecated 
  * Returns <code>true</code> when a historyBack can be performed
  * @return {Boolean}
  * @public 
@@ -667,6 +683,7 @@ function historyHasPrevious() {
 }
 
 /**
+ * @deprecated 
  * Returns the current index when navigating through the history or -1, when not navigating
  * @return {Number}
  * @public 
@@ -677,6 +694,8 @@ function getHistoryIndex() {
 }
 
 /**
+ * @deprecated 
+ * @public 
  * Removes the given item from the history stack
  * @param {NavigationItem} itemToRemove
  *
@@ -692,6 +711,7 @@ function removeItemFromHistory(itemToRemove) {
 }
 
 /**
+ * @deprecated 
  * Sets the maximum number of items held in the navigation history
  * A maximum number of -1 means there is no limit to the number of items in the history
  * @param {Number} historyLength
