@@ -16,39 +16,82 @@ var DEFAULT_NAVBAR_ACTIONS = {
 function initNavigationForm() {
 
 	// init the sidenav menu
-	var menuItems = getMenuItems();
+	var menuItems = loadMenuItems();
 	elements.sidenav.setRootMenuItems(menuItems);
 
 	// init the navbar menu
-	var navbarItems = getNavbarItems();
+	var navbarItems = loadNavbarItems();
 	elements.navbar.setMenuItems(navbarItems);
 }
 
 /**
+ * This method is called as part of then form's onLoad event.
+ * Load the returned list of menu items into the sidenav menu of the template.
+ * Override this method and return an Array of type servoyextra-sidenav.MenuItem (Array<servoyextra-sidenav.MenuItem>)
+ * to initialize the sidenav menu with your own set of menu items.<br/>
+ * Learn more on MenuItem and Sidenav https://github.com/Servoy/servoy-extra-components/wiki/Sidenav#menu-item
+ * 
  * @return {Array<servoyextra-sidenav.MenuItem>}
  * @protected
+ * 
+ * @example <pre>
+ * function loadMenuItems() {
+ * 	var menuItems = [];
+ *	var menuSubItem;
+ *	\\ @type {servoyextra-sidenav.MenuItem} 
+ *	var menuItem = new Object();
+ *	menuItem.id = "svyNavigationUX$Welcome";
+ *	menuItem.iconStyleClass = "fa fa-home";
+ *	menuItem.text = "Home";
+ *	menuItems.push(menuItem);
+ *	return menuItems;
+ *}
+ * </pre>
  * @properties={typeid:24,uuid:"7C672A54-C78D-48DF-946B-F1F96993AAB7"}
  */
-function getMenuItems() {
-	var menuItems = [];
-
-	/** @type {servoyextra-sidenav.MenuItem} */
-	var menuItem = new Object();
-	menuItem.id = "svyNavigationUX$Welcome";
-	menuItem.text = "Welcome"
-	menuItem.iconStyleClass = "fa fa-folder-open";
-	menuItems.push(menuItem);
-
-	return menuItems;
+function loadMenuItems() {
+	return [];
 }
 
 /**
+ * 
+ * This method is called as part of then form's onLoad event.
+ * Load the returned list of menu items into the top navbar menu of this template.
+ * Override this method and return an Array of type bootstrapextracomponents-navbar.menuItem (Array<bootstrapextracomponents-navbar.menuItem>)
+ * to initialize the navbar menu with your own set of menu items.<br/>
+ * Learn more on MenuItem and Navbar https://github.com/Servoy/bootstrapextracomponents/wiki/Navbar#menuitem-type
+ * 
  * @return {Array<bootstrapextracomponents-navbar.menuItem>}
  *
  * @protected
+ * @example <pre>function loadNavbarItems() {
+ *	var menuItems = [];
+ * 	var menuItem;
+ *
+ *	menuItem = elements.navbar.createMenuItem('Search', DEFAULT_NAVBAR_ACTIONS.SEARCH, 'RIGHT');
+ *	menuItem.displayType = 'INPUT_GROUP';
+ *	menuItem.styleClass = 'closed searchbar';
+ *	menuItem.inputButtonStyleClass = "btn-default";
+ *	menuItem.iconName = "fa fa-search";
+ *	menuItems.push(menuItem);
+ *
+ *	if (security.getUserName()) {
+ *		menuItem = elements.navbar.createMenuItem(security.getUserName(), DEFAULT_NAVBAR_ACTIONS.USER, 'RIGHT');
+ *		menuItem.displayType = 'MENU_ITEM';
+ *		menuItem.iconName = 'fa fa-user';
+ *		menuItem.styleClass = 'no-border';
+ *		var submenuItems = [];
+ *
+ *		submenuItems.push(elements.navbar.createMenuItem('Logout', DEFAULT_NAVBAR_ACTIONS.LOGOUT));
+ *		menuItem.subMenuItems = submenuItems;
+ *		menuItems.push(menuItem);
+ *	}
+ *
+ *	return menuItems;
+ *}</pre>
  * @properties={typeid:24,uuid:"22C5E77A-8061-4AF0-801F-7A1DAE6644FE"}
  */
-function getNavbarItems() {
+function loadNavbarItems() {
 	var menuItems = [];
 	var menuItem;
 

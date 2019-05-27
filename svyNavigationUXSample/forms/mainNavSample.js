@@ -1,9 +1,10 @@
 /**
  * @return {Array<servoyextra-sidenav.MenuItem>}
  * @protected
+ * @override 
  * @properties={typeid:24,uuid:"CE12F32F-B497-4ED7-88D8-DB8FB51CD9D2"}
  */
-function getMenuItems() {
+function loadMenuItems() {
 	var menuItems = [];
 	
 	var menuSubItem;

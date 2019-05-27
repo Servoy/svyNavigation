@@ -6,6 +6,8 @@
  * @properties={typeid:24,uuid:"77BE1648-75C9-4618-8D48-1EFA55208C4A"}
  */
 function onLoad(event) {
+	
+	// register for navigation event
 	scopes.svyNavigation.addNavigationListener(onOpenHandler);
 	
 	initNavigationForm();
@@ -13,6 +15,7 @@ function onLoad(event) {
 
 /**
  * This method is called as part of the [onLoad]{@link onLoad} operation flow.
+ * Override this method to initialize your navigation form
  * 
  * @protected 
  * @properties={typeid:24,uuid:"06EA8983-8AAA-4DE2-AC4B-6E02FC6BCB12"}
@@ -88,9 +91,12 @@ function beforeOpen(event) {
 
 /**
  * @private 
+ * 
  * @param {RuntimeForm} form
  * @param {JSRecord|JSFoundSet|QBSelect} dataToShow
  * @param dataSelectionType
+ * 
+ * @return {Boolean}
  *
  * @properties={typeid:24,uuid:"F5EA30A6-0695-44B4-AE6B-0E8ED020FBBE"}
  */
