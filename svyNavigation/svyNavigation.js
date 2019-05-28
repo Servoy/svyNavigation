@@ -39,7 +39,8 @@ var NAVIGATION_EVENT = {
 };
 
 /**
- * Enumeration for the data selection type specified in the open function. The Default value is LOAD_RECORDS
+ * Enumeration for the data selection type specified in the open function. 
+ * The chosen selection type is passed to the open function [open](@link open) [afterOpen](@link afterOpen) and needs to be implemented accordingly. The Default value is LOAD_RECORDS
  * @public 
  * @enum
  * @see open(itemOrId, dataToShow, dataSelectionType)
@@ -218,8 +219,8 @@ function setNavigationPolicies(policies) {
  * 
  * @public 
  * @param {NavigationItem|String} itemOrID
- * @param {JSRecord|JSFoundSet|QBSelect} [dataToShow] The data to show for the given navigation item
- * @param {String} [dataSelectionType] Determine the type of selection in the target navigation item with the given dataToShow {@link NAVIGATION_SELECTION_TYPE} enumeration options. Default NAVIGATION_SELECTION_TYPE.LOAD_RECORDS
+ * @param {JSRecord|JSFoundSet|QBSelect} [dataToShow] The data to show for the given navigation item. The data is passed to the afterOpen event
+ * @param {String} [dataSelectionType] Determine the type of selection in the target navigation item with the given dataToShow {@link NAVIGATION_SELECTION_TYPE} enumeration options. The chosen selection type is passed to the afterOpen and needs to be implemented accordingly. Default NAVIGATION_SELECTION_TYPE.LOAD_RECORDS
  * 
  * @return {Boolean}
  * @properties={typeid:24,uuid:"1210FE48-6A94-40DD-9BF4-B843044EA1ED"}
@@ -522,6 +523,49 @@ function hasItem(itemOrID){
 /**
  * @public 
  * @param {Function} listener
+ * 
+ * @example<pre> // register for navigation event
+ * scopes.svyNavigation.addNavigationListener(onOpen);
+ * 
+ * function onOpen(event) {
+ *	var type = event.getEventType();
+ *	if (type == scopes.svyNavigation.NAVIGATION_EVENT.AFTER_OPEN) {
+ *		var item = event.getNavigationItem();
+ *		var formName = item.getFormName();
+ *		var dataToShow = event.getDataToShow();
+ *		var dataSelectionType = event.getDataSelectionType();
+ *		
+ *		// get the form instance
+ *		var form = forms[formName];
+ *		
+ *		switch (dataSelectionType) {
+ *		case scopes.svyNavigation.NAVIGATION_SELECTION_TYPE.LOAD_RECORDS:
+ *		// load the given data into the foundset form
+ *		if (dataToShow instanceof JSFoundSet) {
+ *			// load the passed foundset into the form's foundset
+ *			form.foundset.loadRecords(dataToShow);
+ *		} else if (dataToShow instanceof QBSelect) {
+ *			// load the QBSelect into the form's foundset
+ *			form.foundset.loadRecords(dataToShow);
+ *		} else if (dataToShow instanceof JSRecord) {
+ *			// load the record into the form's foundset
+ *			scopes.svyDataUtils.loadRecords(form.foundset, dataToShow.getPKs());
+ *		}
+ *		break;
+ *		case scopes.svyNavigation.NAVIGATION_SELECTION_TYPE.SET_FOUNDSET:
+ *			form.controller.loadRecords(dataToShow);
+ *			break;
+ *		default:
+ *			break;
+ *		}
+ *		
+ *		// show the form
+ *		application.showForm(form);
+ *	}
+ *	return true;
+ *}
+ * 
+ * </pre>
  *
  * @properties={typeid:24,uuid:"04A23E5B-4EC6-4E24-BAB1-AA9CAF0A8169"}
  */
@@ -535,6 +579,10 @@ function addNavigationListener(listener) {
  * @public 
  * @param {Function} listener
  * @return {Boolean}
+ * 
+ * @example<pre>
+ * scopes.svyNavigation.removeNavigationListener(onOpen);
+ * </pre>
  *
  * @properties={typeid:24,uuid:"E5011D75-223B-40AA-A4A0-79C4A13CB464"}
  */
