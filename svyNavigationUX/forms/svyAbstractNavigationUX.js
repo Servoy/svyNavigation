@@ -116,7 +116,7 @@ function loadFormData(form, dataToShow, dataSelectionType) {
 		
 		// TODO shall i check the dataSource type ?
 		if (dataToShow instanceof JSFoundSet) {
-			dataToShow = dataToShow;
+			jsFoundset = dataToShow;
 			success = form.foundset.loadRecords(jsFoundset);
 		} else if (dataToShow instanceof QBSelect) {
 			query = dataToShow;
@@ -143,13 +143,15 @@ function loadFormData(form, dataToShow, dataSelectionType) {
 		record = dataToShow;
 		success = scopes.svyDataUtils.selectRecord(form.foundset, record);
 		
-		// to force the selection, load all the record in foundset
-		jsFoundset = form.foundset.duplicateFoundSet();
-		jsFoundset.loadAllRecords();
-		if (scopes.svyDataUtils.selectRecord(jsFoundset, record)) {
-			success = form.foundset.loadRecords(jsFoundset);
-		} else {
-			application.output(utils.stringFormat('Cannot select record "%1$s"', [record.getPKs().join(",")]), LOGGINGLEVEL.WARNING)
+		if (!success) {
+			// to force the selection, load all the record in foundset
+			jsFoundset = form.foundset.duplicateFoundSet();
+			jsFoundset.loadAllRecords();
+			if (scopes.svyDataUtils.selectRecord(jsFoundset, record)) {
+				success = form.foundset.loadRecords(jsFoundset);
+			} else {
+				application.output(utils.stringFormat('Cannot select record "%1$s"', [record.getPKs().join(",")]), LOGGINGLEVEL.WARNING)
+			}
 		}
 		
 		break;

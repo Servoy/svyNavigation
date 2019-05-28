@@ -103,7 +103,7 @@ width:40
 },
 {
 autoResize:false,
-id:"force_select",
+id:"force",
 styleClass:"fa fa-arrow-right text-success",
 svyUUID:"755876EC-AB19-4EC4-8786-FDE29504DEC1",
 width:40
