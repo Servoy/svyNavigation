@@ -4,5 +4,4 @@
 	<buildpathentry exported="true" kind="prj" path="/exampleDataModel"/>
 	<buildpathentry exported="true" kind="prj" path="/svyNavigationUX"/>
 	<buildpathentry exported="true" kind="prj" path="/svySecurityUX"/>
-	<buildpathentry exported="true" kind="prj" path="/svyThemeRoller"/>
 </buildpath>
