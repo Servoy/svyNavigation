@@ -6,7 +6,8 @@
 		<project>resources</project>
 		<project>bootstrapextracomponents</project>
 		<project>aggrid</project>
-		<project>servoy-extra-components</project>
+		<project>svyNavigation</project>
+		<project>svySecurity</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

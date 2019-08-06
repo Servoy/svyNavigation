@@ -1,4 +1,10 @@
 customProperties:"formComponent:false,\
+methods:{\
+onShowMethodID:{\
+arguments:null,\
+parameters:null\
+}\
+},\
 useCssPosition:true",
 extendsID:"438E8CC5-E18C-4FDB-AE90-96E300473BCF",
 items:[
@@ -68,6 +74,7 @@ uuid:"FA2D43DA-AF18-49B5-9747-1EAAF1DF855B"
 }
 ],
 name:"svyNavigationUX$Sidenav",
+onShowMethodID:"06F44AEF-F11B-48CA-9B83-65DD135D90B9",
 size:"320,300",
 typeid:3,
 uuid:"5B7973E6-6E2D-4648-9874-87BF8A537598"

@@ -269,4 +269,27 @@ function onNavbarMenuItemClicked(event, menuItem) { }
 function onGlobalSearch(searchText) {
 	// TODO should it fire an event GLOBAL_SEARCH for which inner forms can listen to !?
 	// How to add an event listener for search !? should be a new scope in svyNavigationUX ?
+	scopes.svyNavigationUX.triggerGlobalSearch(searchText);
+}
+
+/**
+ * Callback method for when form is shown.
+ *
+ * @param {Boolean} firstShow form is shown first time after load
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @protected
+ *
+ * @properties={typeid:24,uuid:"06F44AEF-F11B-48CA-9B83-65DD135D90B9"}
+ */
+function onShow(firstShow, event) {
+	if (firstShow) {
+		// set first selection
+		if (elements.sidenav.containedForm) {
+			var selectedItem = elements.sidenav.getMenuItem(elements.sidenav.containedForm);
+			if (selectedItem) {
+				elements.sidenav.setSelectedMenuItem(elements.sidenav.containedForm);
+			}
+		}
+	}
 }
