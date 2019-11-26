@@ -31,7 +31,7 @@ function initNavigationForm() {
  * to initialize the sidenav menu with your own set of menu items.<br/>
  * Learn more on MenuItem and Sidenav https://github.com/Servoy/servoy-extra-components/wiki/Sidenav#menu-item
  * 
- * @return {Array<servoyextra-sidenav.MenuItem>}
+ * @return {Array<CustomType<servoyextra-sidenav.MenuItem>>}
  * @protected
  * 
  * @example <pre>
@@ -61,7 +61,7 @@ function loadMenuItems() {
  * to initialize the navbar menu with your own set of menu items.<br/>
  * Learn more on MenuItem and Navbar https://github.com/Servoy/bootstrapextracomponents/wiki/Navbar#menuitem-type
  * 
- * @return {Array<bootstrapextracomponents-navbar.menuItem>}
+ * @return {Array<CustomType<bootstrapextracomponents-navbar.menuItem>>}
  *
  * @protected
  * @example <pre>function loadNavbarItems() {
@@ -211,7 +211,7 @@ function onMenuItemSelected(menuItemId, event) {
  * Called whenever a menu item is clicked or a submenu item is selected with the JSEvent and the menuItem object clicked on.
  *
  * @param {JSEvent} event
- * @param {bootstrapextracomponents-navbar.menuItem} menuItem
+ * @param {CustomType<bootstrapextracomponents-navbar.menuItem>} menuItem
  *
  * @private
  *
@@ -251,13 +251,14 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
  * Called whenever a menu item is clicked or a submenu item is selected with the JSEvent and the menuItem object clicked on.
  *
  * @param {JSEvent} event
- * @param {bootstrapextracomponents-navbar.menuItem} menuItem
+ * @param {CustomType<bootstrapextracomponents-navbar.menuItem>} menuItem
  * @protected
- *
  *
  * @properties={typeid:24,uuid:"8A65736D-B12C-4978-8A11-468129B7201F"}
  */
-function onNavbarMenuItemClicked(event, menuItem) { }
+function onNavbarMenuItemClicked(event, menuItem) { 
+	// intentionally left empty
+}
 
 /**
  *

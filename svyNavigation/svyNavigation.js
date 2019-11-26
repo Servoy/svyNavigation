@@ -87,6 +87,7 @@ var NAVIGATION_SELECTION_TYPE = {
  * Maximium number of items in the navigation history (defaults to 100)
  * @type {Number}
  * @private 
+ * @SuppressWarnings(unused)
  *
  * @properties={typeid:35,uuid:"DDE2AD7F-B03C-49C5-9881-6EC8DEFC268D",variableType:4}
  */
