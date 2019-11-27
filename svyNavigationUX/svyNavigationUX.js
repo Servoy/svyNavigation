@@ -8,8 +8,24 @@ var NAVIGATION_EVENT = {
 };
 
 /**
- * @param {Function} listener
+ * @param {function(String)} listener
  * @public
+ * 
+ * @example <pre>
+ * function onShow(firstShow, event) {
+	// listen for a global search event
+	scopes.svyNavigationUX.addGlobalSearchListener(globalSearchListener);
+}
+
+function globalSearchListener(searchText) {
+	// perform a search
+}
+
+function onHide(event) {
+	// stop listening when hiding the form
+	scopes.svyNavigationUX.removeGlobalSearchListener(globalSearchListener)
+	return true
+}</pre>
  *
  * @properties={typeid:24,uuid:"942B4700-9824-401D-B648-13577CAD641A"}
  */
@@ -19,8 +35,24 @@ function addGlobalSearchListener(listener) {
 
 
 /**
- * @param {Function} listener
+ * @param {function(String)} listener
  * @public 
+ * 
+ * @example <pre>
+ * function onShow(firstShow, event) {
+	// listen for a global search event
+	scopes.svyNavigationUX.addGlobalSearchListener(globalSearchListener);
+}
+
+function globalSearchListener(searchText) {
+	// perform a search
+}
+
+function onHide(event) {
+	// stop listening when hiding the form
+	scopes.svyNavigationUX.removeGlobalSearchListener(globalSearchListener)
+	return true
+}</pre>
  *
  * @properties={typeid:24,uuid:"88C787BF-C39C-43C7-B3FD-810CDC58E8A1"}
  */

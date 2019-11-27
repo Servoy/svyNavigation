@@ -223,6 +223,22 @@ function setNavigationPolicies(policies) {
  * @param {JSRecord|JSFoundSet|QBSelect} [dataToShow] The data to show for the given navigation item. The data is passed to the afterOpen event
  * @param {String} [dataSelectionType] Determine the type of selection in the target navigation item with the given dataToShow {@link NAVIGATION_SELECTION_TYPE} enumeration options. The chosen selection type is passed to the afterOpen and needs to be implemented accordingly. Default NAVIGATION_SELECTION_TYPE.LOAD_RECORDS
  * 
+ * 
+ *
+ * <pre>//open a form
+ * var item = new scopes.svyNavigation.NavigationItem(formName);
+ * scopes.svyNavigation.open(item);
+ * 
+ * //open an item and pass data selection
+ * var item = new scopes.svyNavigation.NavigationItem(formName);
+ * scopes.svyNavigation.open(item,foundset.getSelectedRecord(),scopes.svyNavigation.NAVIGATION_SELECTION_TYPE.LOAD_RECORDS);
+ * 
+ * // open a form and pass custom data
+ * var item = new scopes.svyNavigation.NavigationItem("ordersTableView");
+ * item.setCustomData({ filter: { dataprovider: "orderdate", operator: "between", values: [startDate, endDate] } });
+ * scopes.svyNavigation.open(item);
+ * </pre>
+ * 
  * @return {Boolean}
  * @properties={typeid:24,uuid:"1210FE48-6A94-40DD-9BF4-B843044EA1ED"}
  */
@@ -562,7 +578,12 @@ function hasItem(itemOrID){
  *		
  *		// show the form
  *		application.showForm(form);
- *	}
+ *	} else if (event.getEventType() == scopes.svyNavigation.NAVIGATION_EVENT.BEFORE_CLOSE) {
+ *      // cancel navigation if there are pending edits to be saved
+ *      if (databaseManager.getEditedRecords().length) {
+ *          return false;   // or ask in a dialog
+ *      }
+ *  }
  *	return true;
  *}
  * 
@@ -972,6 +993,20 @@ function setupNavigationItem() {
      * @public
      * @return {*}
      * @this {NavigationItem}
+     * 
+     * @example <pre>
+     * function onShow() {
+     *   // get the current navigation item
+     *    var item = scopes.svyNavigation.getCurrentItem();
+     *    var customData = item.getCustomData();
+     *    if (customData && customData.filter) {
+     *       var filter = customData.filter;
+     *       foundset.addFoundSetFilterParam(filter.dataprovider, filter.operator, filter.values);
+     *       foundset.loadRecords();
+     *    }
+     * }
+     * </pre>
+     * 
      */
     NavigationItem.prototype.getCustomData = function() {
         return this.customData;
@@ -982,6 +1017,13 @@ function setupNavigationItem() {
      * @param {*} customData
      * @return {NavigationItem}
      * @this {NavigationItem}
+     * 
+     * @example <pre>
+     * var item = new scopes.svyNavigation.NavigationItem("ordersTableView");
+     * item.setCustomData({ filter: { dataprovider: "orderdate", operator: "between", values: [startDate, endDate] } });
+     * scopes.svyNavigation.open(item);
+     * </pre>
+     * 
      */
     NavigationItem.prototype.setCustomData = function(customData) {
         this.customData = customData;

@@ -37,13 +37,14 @@ function initNavigationForm() {
  * @example <pre>
  * function loadMenuItems() {
  * 	var menuItems = [];
- *	var menuSubItem;
- *	\\ @type {servoyextra-sidenav.MenuItem} 
+ *	
+ *	\\ @type {CustomType&lt;servoyextra-sidenav.MenuItem&gt;} 
  *	var menuItem = new Object();
- *	menuItem.id = "svyNavigationUX$Welcome";
+ *	menuItem.id = "yourFormName";
  *	menuItem.iconStyleClass = "fa fa-home";
  *	menuItem.text = "Home";
  *	menuItems.push(menuItem);
+ *
  *	return menuItems;
  *}
  * </pre>
@@ -268,8 +269,6 @@ function onNavbarMenuItemClicked(event, menuItem) {
  * @properties={typeid:24,uuid:"3DEDEC6C-611D-4FF2-A726-A79EA0B7060D"}
  */
 function onGlobalSearch(searchText) {
-	// TODO should it fire an event GLOBAL_SEARCH for which inner forms can listen to !?
-	// How to add an event listener for search !? should be a new scope in svyNavigationUX ?
 	scopes.svyNavigationUX.triggerGlobalSearch(searchText);
 }
 
