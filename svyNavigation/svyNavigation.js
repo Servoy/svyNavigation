@@ -1,6 +1,6 @@
 /**
  * Enumeration for navigation policy options which control how to update the stack of navigation item when an item is opened or closed.
- * @public 
+ * @private  
  * @enum 
  * @properties={typeid:35,uuid:"58A3FF05-89EB-403F-A003-D984BB984064",variableType:-4}
  */
@@ -143,7 +143,7 @@ var navigationPolicies = createNavigationPolicies();
 /**
  * Internal constructor. To create a new instance of the NavigationPolicies class use the method {@link createNavigationPolicies}.
  * @classdesc This class encapsulates the various supported navigation policies.
- * @protected 
+ * @private  
  * @constructor
  * @properties={typeid:24,uuid:"DE6AB0B7-8695-4B46-9B2E-DE5D8BC8FFEB"}
  */
@@ -179,7 +179,7 @@ function NavigationPolicies() {
 
 /**
  * Factory method for creating {@link NavigationPolicies} objects.
- * @public 
+ * @private  
  * @return {NavigationPolicies} The created {@link NavigationPolicies} object.
  * 
  * @example <pre>// create new navigation policies
@@ -197,7 +197,7 @@ function createNavigationPolicies() {
 
 /**
  * Sets the navigation policies; is suggested to call this method at the onOpenSolution event to properly initialize the navigation
- * @public 
+ * @private  
  * @param {NavigationPolicies} policies
  * @example <pre>// create new navigation policies
 	var navPolicies = scopes.svyNavigation.createNavigationPolicies();
@@ -374,7 +374,7 @@ function indexOf(itemOrID){
  * Closes current navigation item and opens the previous item
  * @param {NavigationItem|String} [itemOrID]
  * 
- * @public 
+ * @private 
  * @return {Boolean}
  * @properties={typeid:24,uuid:"2F17EE08-7E2D-4559-9C53-53D50612A8FB"}
  */
@@ -447,7 +447,7 @@ function close(itemOrID) {
 }
 
 /**
- * @public 
+ * @private  
  * @param {NavigationItem} navigationItem
  * @return {Boolean}
  * @properties={typeid:24,uuid:"2E121717-BF41-45FB-A7A0-86C384EC2359"}
@@ -470,7 +470,7 @@ function reset(navigationItem){
 }
 
 /**
- * @public 
+ * @private  
  * @return {Array<NavigationItem>}
  * @properties={typeid:24,uuid:"37235352-825E-4881-8E35-78A52A467961"}
  */
@@ -484,7 +484,7 @@ function getNavigationItems(){
 
 /**
  * Returns the item with the given ID from the items stack when found and null otherwise
- * @public 
+ * @private  
  * @param {String} id
  * @return {NavigationItem}
  * @properties={typeid:24,uuid:"73F69D5E-6708-4937-AE3D-ACBC5C620A89"}
@@ -503,7 +503,7 @@ function getNavigationItem(id){
 /**
  * @deprecated 
  * Returns the item with the given ID from the history stack when found and null otherwise
- * @public 
+ * @private  
  * @param {String} id
  * @return {NavigationItem}
  * @properties={typeid:24,uuid:"63DBA653-9A7C-4583-82D6-A1A3DD9D69F4"}
@@ -528,7 +528,7 @@ function getCurrentItem(){
 }
 
 /**
- * @public 
+ * @private  
  * @param {NavigationItem|String} itemOrID
  * @return {Boolean}
  * @properties={typeid:24,uuid:"A9618AEE-8091-49D1-B838-EAC9CFDC7CCB"}
@@ -668,7 +668,7 @@ function fireEvent(eventType, item, dataToShow, dataSelectionType) {
 /**
  * @deprecated 
  * Returns the history of navigation items
- * @public 
+ * @private  
  * @return {Array<NavigationItem>}
  *
  * @properties={typeid:24,uuid:"3ACE4E67-28CC-419D-A031-4944AA4A7809"}
@@ -680,7 +680,7 @@ function getHistory() {
 /**
  * @deprecated 
  * Clears the history
- * @public 
+ * @private 
  * @properties={typeid:24,uuid:"938BB658-5465-421D-A1C7-3FE835522B77"}
  */
 function clearHistory() {
@@ -691,7 +691,7 @@ function clearHistory() {
  * @deprecated 
  * Goes back one step in the navigation history from the current position
  * @return {NavigationItem}
- * @public 
+ * @private 
  * @properties={typeid:24,uuid:"526F3087-9A7A-4540-AFD5-F069FDE8D6FA"}
  */
 function historyBack() {
@@ -714,7 +714,7 @@ function historyBack() {
  * @deprecated 
  * Goes forward one step in the navigation history from the current position
  * @return {NavigationItem}
- * @public
+ * @private
  * @properties={typeid:24,uuid:"090823B5-6A79-4219-879A-789C0B8FA5EF"}
  */
 function historyNext() {
@@ -734,7 +734,7 @@ function historyNext() {
  * @deprecated 
  * Returns <code>true</code> when a historyNext can be performed
  * @return {Boolean}
- * @public 
+ * @private 
  * @properties={typeid:24,uuid:"25CBB80E-C496-4703-A34D-6606C105028E"}
  */
 function historyHasNext() {
@@ -745,7 +745,7 @@ function historyHasNext() {
  * @deprecated 
  * Returns <code>true</code> when a historyBack can be performed
  * @return {Boolean}
- * @public 
+ * @private 
  * @properties={typeid:24,uuid:"4BFC6545-7B49-44EC-BC71-D108370A9029"}
  */
 function historyHasPrevious() {
@@ -756,7 +756,7 @@ function historyHasPrevious() {
  * @deprecated 
  * Returns the current index when navigating through the history or -1, when not navigating
  * @return {Number}
- * @public 
+ * @private 
  * @properties={typeid:24,uuid:"93410851-45D1-40C7-87E4-3C38FA26D978"}
  */
 function getHistoryIndex() {
@@ -765,7 +765,7 @@ function getHistoryIndex() {
 
 /**
  * @deprecated 
- * @public 
+ * @private 
  * Removes the given item from the history stack
  * @param {NavigationItem} itemToRemove
  *
@@ -785,7 +785,7 @@ function removeItemFromHistory(itemToRemove) {
  * Sets the maximum number of items held in the navigation history
  * A maximum number of -1 means there is no limit to the number of items in the history
  * @param {Number} historyLength
- * @public 
+ * @private  
  *
  * @properties={typeid:24,uuid:"5E5051CF-F74E-4FE4-A24B-414140E6C522"}
  */
