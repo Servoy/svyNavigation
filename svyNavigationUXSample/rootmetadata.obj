@@ -1,5 +1,5 @@
 fileVersion:51,
-mustAuthenticate:true,
+mustAuthenticate:false,
 name:"svyNavigationUXSample",
 solutionType:1024,
 typeid:43,

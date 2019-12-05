@@ -141,6 +141,7 @@ right:"15",
 top:"-1",
 width:"80"
 },
+onActionMethodID:"621651E8-E458-48C6-B67A-65E58BAF0A4A",
 styleClass:"text-center clickable text-info",
 text:"Learn more ->"
 },
@@ -161,6 +162,7 @@ right:"calc(50% + 15px)",
 top:"-1",
 width:"80"
 },
+onActionMethodID:"DD86237E-C1C2-44CC-99D2-5A90195838B2",
 styleClass:"text-center clickable text-info",
 text:"Learn more ->"
 },

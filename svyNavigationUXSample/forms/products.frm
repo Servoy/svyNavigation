@@ -128,7 +128,7 @@ formIndex:6,
 name:"categoryid",
 typeid:4,
 uuid:"9177E828-5E0E-4EB7-81CC-98D06D866294",
-valuelistID:"7DECD9D7-D260-4C14-863A-117C8A4DAD8A"
+valuelistID:"84FA7420-587A-49F2-90CC-FDA145B0A807"
 },
 {
 cssPosition:"148,-1,-1,390,120,32",
@@ -223,7 +223,7 @@ formIndex:4,
 name:"supplierid",
 typeid:4,
 uuid:"E62E3ECC-1B92-4347-8049-A3F01B75E51F",
-valuelistID:"73ED6631-E925-4C14-985B-6B97AB57A833"
+valuelistID:"FDA6EC90-4BDF-4316-94E1-EB76E0E5E90F"
 },
 {
 cssPosition:"30,-1,30,30,300,0",

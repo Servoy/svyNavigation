@@ -1,0 +1,12 @@
+customProperties:"lazyLoading:false",
+dataProviderID1:"categoryid",
+dataProviderID2:"categoryname",
+dataSource:"db:/example_data/categories",
+displayValueType:12,
+name:"categories",
+realValueType:4,
+returnDataProviders:1,
+showDataProviders:2,
+typeid:34,
+uuid:"84FA7420-587A-49F2-90CC-FDA145B0A807",
+valueListType:1
