@@ -119,6 +119,8 @@ function loadNavbarItems() {
 }
 
 /**
+ * Returns the active formName which is the containedForm of the sidenav element
+ * 
  * @return {String}
  * @public
  *
@@ -164,6 +166,8 @@ function onOpen(event) {
 }
 
 /**
+ * Called whenever a menu item from the sidenav is selected with the JSEvent and the menuItemId clicked on.
+ * 
  * @param {String} menuItemId
  * @param {JSEvent} event
  *
@@ -196,6 +200,11 @@ function onMenuItemSelectedHandler(menuItemId, event) {
 }
 
 /**
+ * Called as part of the onMenuItemSelectedHandler event
+ * Called whenever a menu item from the sidenav is selected with the JSEvent and the menuItemId clicked on.
+ * This method can be overriden to prevent the selection (.e.g check if user has permissions) or for handling specific menu options which will trigger a function (.e.g logout) instead of switching the visible form
+ * Return false to stop the navigation and prevent the selection.
+ * 
  * @protected
  * @param {String} menuItemId
  * @param {JSEvent} event
@@ -249,11 +258,25 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
 }
 
 /**
+ * Called as part of the onNavbarMenuItemClickedHandler event
  * Called whenever a menu item is clicked or a submenu item is selected with the JSEvent and the menuItem object clicked on.
+ * This method can be overriden for handling specific navbar options
  *
  * @param {JSEvent} event
  * @param {CustomType<bootstrapextracomponents-navbar.menuItem>} menuItem
  * @protected
+ * 
+ * @example <pre>
+ * function onNavbarMenuItemClicked(event, menuItem) {
+ * 
+ *   switch (menuItem.itemId) {
+ *   case DEFAULT_NAVBAR_ACTIONS.LOGOUT:
+ *   	scopes.svySecurity.logout();
+ *   	break;
+ *   default:
+ *   	break;
+ *   }
+ *}</pre>
  *
  * @properties={typeid:24,uuid:"8A65736D-B12C-4978-8A11-468129B7201F"}
  */
@@ -262,8 +285,7 @@ function onNavbarMenuItemClicked(event, menuItem) {
 }
 
 /**
- *
- * @protected
+ * @private 
  * @param {String} searchText
  *
  * @properties={typeid:24,uuid:"3DEDEC6C-611D-4FF2-A726-A79EA0B7060D"}
