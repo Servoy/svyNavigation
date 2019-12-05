@@ -81,7 +81,7 @@ function clearHistory() {
  * @public 
  * @properties={typeid:24,uuid:"6652B0F1-EDC4-480F-BF88-69618E685032"}
  */
-function historyBack() {
+function back() {
 	var success = false;
 	
 	if (itemsHistory.length <= 1 || itemsHistoryIndex === 0) {
@@ -122,7 +122,7 @@ function historyBack() {
  * @public
  * @properties={typeid:24,uuid:"D92C5424-874C-4A2D-9387-4531DA11EC52"}
  */
-function historyNext() {
+function next() {
 	var success = false;
 	
 	if (itemsHistory.length <= 1 || itemsHistoryIndex === -1 || itemsHistoryIndex >= (itemsHistory.length - 1)) {
@@ -160,7 +160,7 @@ function historyNext() {
  * @public 
  * @properties={typeid:24,uuid:"204B11FC-2D9E-4882-9BBD-EF12E567C8EC"}
  */
-function historyHasNext() {
+function hasNext() {
 	return itemsHistoryIndex !== -1 && itemsHistoryIndex <= itemsHistory.length - 2;
 }
 
@@ -170,7 +170,7 @@ function historyHasNext() {
  * @public 
  * @properties={typeid:24,uuid:"5C72A676-4851-4555-B3DB-56EAFEF3253C"}
  */
-function historyHasPrevious() {
+function hasPrevious() {
 	return !(itemsHistory.length <= 1 || itemsHistoryIndex === 0);
 }
 
