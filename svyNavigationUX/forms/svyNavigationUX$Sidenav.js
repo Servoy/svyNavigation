@@ -286,9 +286,10 @@ function onShow(firstShow, event) {
 	if (firstShow) {
 		// set first selection
 		if (elements.sidenav.containedForm) {
-			var selectedItem = elements.sidenav.getMenuItem(elements.sidenav.containedForm);
+			var selectedItemID = getMenuItemID(elements.sidenav.containedForm); 
+			var selectedItem = elements.sidenav.getMenuItem(selectedItemID);
 			if (selectedItem) {
-				elements.sidenav.setSelectedMenuItem(elements.sidenav.containedForm);
+				elements.sidenav.setSelectedMenuItem(selectedItemID);
 			}
 		}
 	}
