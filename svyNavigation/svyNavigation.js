@@ -83,17 +83,6 @@ var NAVIGATION_SELECTION_TYPE = {
 }
 
 /**
- * @deprecated 
- * Maximium number of items in the navigation history (defaults to 100)
- * @type {Number}
- * @private 
- * @SuppressWarnings(unused)
- *
- * @properties={typeid:35,uuid:"DDE2AD7F-B03C-49C5-9881-6EC8DEFC268D",variableType:4}
- */
-var MAX_HISTORY_LENGTH = 100;
-
-/**
  * @private 
  * @type {Array<Function>}
  * @properties={typeid:35,uuid:"81D3643A-CACA-4109-9308-F219E9F2CDC0",variableType:-4}
@@ -106,31 +95,6 @@ var listeners = [];
  * @properties={typeid:35,uuid:"C8BA50D6-E824-477C-A20E-601C2889D0B8",variableType:-4}
  */
 var items = [];
-
-/**
- * TODO it can be used as a proper history stack. 
- * Open items are pushed into the history stack.
- * It could have 2 types of policies LINEAR, CONCURRENT. A linear policy could behave like a stack. 
- * While concurrent policy would always add an open item on top of it (even if already exists in the stack, like browser history);
- * 
- * @private 
- * @type {Array<NavigationItem>}
- * @properties={typeid:35,uuid:"96297058-1B48-46D4-BFBF-103287F9F507",variableType:-4}
- */
-var itemsHistory = [];
-
-/**
- * @deprecated 
- * When navigating through the history, this index is used
- * Whenever a new navigation item is added while walking through history,
- * this history stack is cut off (items after this index will be removed) 
- * and the index is reset
- * @private 
- * @type {Number}
- *
- * @properties={typeid:35,uuid:"543C177C-5C58-4160-B8A5-61359A058CE2",variableType:4}
- */
-var itemsHistoryIndex = -1;
 
 /**
  * Set the navigation policies when the 
@@ -499,24 +463,6 @@ function getNavigationItem(id){
 }
 
 /**
- * @deprecated 
- * Returns the item with the given ID from the history stack when found and null otherwise
- * @private  
- * @param {String} id
- * @return {NavigationItem}
- * @properties={typeid:24,uuid:"63DBA653-9A7C-4583-82D6-A1A3DD9D69F4"}
- */
-function getNavigationItemFromHistory(id){
-	for(var i in itemsHistory){
-		var item = itemsHistory[i];
-		if (item.getID() == id){
-			return item;
-		}
-	}
-	return null;
-}
-
-/**
  * @public 
  * @return {NavigationItem}
  * @properties={typeid:24,uuid:"0BAAECA1-12F7-4EDF-B27B-12502A00F940"}
@@ -660,143 +606,6 @@ function fireEvent(eventType, item, dataToShow, dataSelectionType) {
 		}
 	}
 	return true;
-}
-
-
-/**
- * @deprecated 
- * Returns the history of navigation items
- * @private  
- * @return {Array<NavigationItem>}
- *
- * @properties={typeid:24,uuid:"3ACE4E67-28CC-419D-A031-4944AA4A7809"}
- */
-function getHistory() {
-	return itemsHistory;
-}
-
-/**
- * @deprecated 
- * Clears the history
- * @private 
- * @properties={typeid:24,uuid:"938BB658-5465-421D-A1C7-3FE835522B77"}
- */
-function clearHistory() {
-	itemsHistory = [];
-}
-
-/**
- * @deprecated 
- * Goes back one step in the navigation history from the current position
- * @return {NavigationItem}
- * @private 
- * @properties={typeid:24,uuid:"526F3087-9A7A-4540-AFD5-F069FDE8D6FA"}
- */
-function historyBack() {
-	if (itemsHistory.length <= 1 || itemsHistoryIndex === 0) {
-		//nowhere to go back or we already sit on the first item
-		return null;
-	}
-	if (itemsHistoryIndex === -1) {
-		itemsHistoryIndex = itemsHistory.length - 1;
-	}
-	//reduce index by 1
-	itemsHistoryIndex --;
-	var historyItem = itemsHistory[itemsHistoryIndex];
-	//open previous item and return that
-	openHandler(historyItem, true);
-	return historyItem;
-}
-
-/**
- * @deprecated 
- * Goes forward one step in the navigation history from the current position
- * @return {NavigationItem}
- * @private
- * @properties={typeid:24,uuid:"090823B5-6A79-4219-879A-789C0B8FA5EF"}
- */
-function historyNext() {
-	if (itemsHistory.length <= 1 || itemsHistoryIndex === -1 || itemsHistoryIndex >= (itemsHistory.length - 1)) {
-		//nowhere to go to, we have not been through history at all or we already sit on the last item of the stack
-		return null;
-	}
-	//advance index by 1
-	itemsHistoryIndex ++;
-	var historyItem = itemsHistory[itemsHistoryIndex];
-	//open next item and return that
-	openHandler(historyItem, true);
-	return historyItem;
-}
-
-/**
- * @deprecated 
- * Returns <code>true</code> when a historyNext can be performed
- * @return {Boolean}
- * @private 
- * @properties={typeid:24,uuid:"25CBB80E-C496-4703-A34D-6606C105028E"}
- */
-function historyHasNext() {
-	return itemsHistoryIndex !== -1 && itemsHistoryIndex <= itemsHistory.length - 2;
-}
-
-/**
- * @deprecated 
- * Returns <code>true</code> when a historyBack can be performed
- * @return {Boolean}
- * @private 
- * @properties={typeid:24,uuid:"4BFC6545-7B49-44EC-BC71-D108370A9029"}
- */
-function historyHasPrevious() {
-	return !(itemsHistory.length <= 1 || itemsHistoryIndex === 0);
-}
-
-/**
- * @deprecated 
- * Returns the current index when navigating through the history or -1, when not navigating
- * @return {Number}
- * @private 
- * @properties={typeid:24,uuid:"93410851-45D1-40C7-87E4-3C38FA26D978"}
- */
-function getHistoryIndex() {
-	return itemsHistoryIndex;
-}
-
-/**
- * @deprecated 
- * @private 
- * Removes the given item from the history stack
- * @param {NavigationItem} itemToRemove
- *
- * @properties={typeid:24,uuid:"53F01671-D8B2-48E5-B8F0-093A0E5733D1"}
- */
-function removeItemFromHistory(itemToRemove) {
-	if (!itemToRemove) return;
-	for (var i = 0; i < itemsHistory.length; i++) {
-		if (itemsHistory[i].getID() === itemToRemove.getID()) {
-			itemsHistory.splice(i, 1);
-		}
-	}
-}
-
-/**
- * @deprecated 
- * Sets the maximum number of items held in the navigation history
- * A maximum number of -1 means there is no limit to the number of items in the history
- * @param {Number} historyLength
- * @private  
- *
- * @properties={typeid:24,uuid:"5E5051CF-F74E-4FE4-A24B-414140E6C522"}
- */
-function setMaxHistoryLength(historyLength) {
-	if (!(historyLength >= -1)) {
-		//nothing reasonable given
-		return;
-	}
-	MAX_HISTORY_LENGTH = historyLength;
-	if (historyLength !== -1 && itemsHistory.length > historyLength) {
-		//history already longer than given; remove from start what doesn't fit anymore
-		itemsHistory.splice(0, itemsHistory.length - historyLength);
-	}
 }
 
 /**
