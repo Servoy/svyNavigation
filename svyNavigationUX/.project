@@ -3,11 +3,10 @@
 	<name>svyNavigationUX</name>
 	<comment></comment>
 	<projects>
-		<project>resources</project>
 		<project>bootstrapextracomponents</project>
-		<project>aggrid</project>
 		<project>svyNavigation</project>
 		<project>svySecurity</project>
+		<project>svyUtils</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
