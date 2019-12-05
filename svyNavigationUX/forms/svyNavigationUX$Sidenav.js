@@ -230,7 +230,7 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
 		onGlobalSearch(menuItem.text);
 		break;
 	case DEFAULT_NAVBAR_ACTIONS.LOGOUT:
-		scopes.svySecurity.logout();
+		// TODO shall implement a onLogout event ?
 		break;
 	default:
 
