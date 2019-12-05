@@ -223,9 +223,7 @@ function setNavigationPolicies(policies) {
  * @param {JSRecord|JSFoundSet|QBSelect} [dataToShow] The data to show for the given navigation item. The data is passed to the afterOpen event
  * @param {String} [dataSelectionType] Determine the type of selection in the target navigation item with the given dataToShow {@link NAVIGATION_SELECTION_TYPE} enumeration options. The chosen selection type is passed to the afterOpen and needs to be implemented accordingly. Default NAVIGATION_SELECTION_TYPE.LOAD_RECORDS
  * 
- * 
- *
- * <pre>//open a form
+ * @example <pre>//open a form
  * var item = new scopes.svyNavigation.NavigationItem(formName);
  * scopes.svyNavigation.open(item);
  * 
@@ -539,7 +537,7 @@ function hasItem(itemOrID){
 
 /**
  * @public 
- * @param {Function} listener
+ * @param {function(NavigationEvent)} listener
  * 
  * @example<pre> // register for navigation event
  * scopes.svyNavigation.addNavigationListener(onOpen);
@@ -599,7 +597,7 @@ function addNavigationListener(listener) {
 
 /**
  * @public 
- * @param {Function} listener
+ * @param {function(NavigationEvent)} listener
  * @return {Boolean}
  * 
  * @example<pre>
@@ -813,6 +811,9 @@ function setMaxHistoryLength(historyLength) {
 function NavigationEvent(eventType, item, data, dataSelectionType){
 	
 	/**
+	 * Returns the navigation event type;
+	 * The event type value can be scopes.svyNavigation.NAVIGATION_EVENT.AFTER_OPEN or scopes.svyNavigation.NAVIGATION_EVENT.BEFORE_OPEN
+	 * 
 	 * @public 
 	 * @return {String}
 	 */
@@ -821,6 +822,8 @@ function NavigationEvent(eventType, item, data, dataSelectionType){
 	}
 	
 	/**
+	 * Returns the navigation item
+	 * 
 	 * @public 
 	 * @return {NavigationItem}
 	 */
@@ -829,6 +832,7 @@ function NavigationEvent(eventType, item, data, dataSelectionType){
 	}
 	
 	/**
+	 * 
 	 * @public 
 	 * @return {JSRecord|JSFoundSet|QBSelect}
 	 */
@@ -836,12 +840,31 @@ function NavigationEvent(eventType, item, data, dataSelectionType){
 		return data;
 	}
 	/**
+	 * Returns the data selection type.
+	 * The value of the data selection type can be one from the enum scopes.svyNavigation.NAVIGATION_SELECTION_TYPE
+	 * 
 	 * @public 
 	 * @return {String}
 	 */
 	this.getDataSelectionType = function(){
 		return dataSelectionType;
 	}
+}
+
+/**
+ * Creates a NavigationItem object to the given formName
+ * 
+ * @param {String} [formName]
+ * @param {String} [text]
+ * @param {String} [tooltipText]
+ * @public 
+ * 
+ * @return {NavigationItem}
+ *
+ * @properties={typeid:24,uuid:"88AE45D1-10B7-4EBB-AF45-BCCDB8B3482E"}
+ */
+function createNavigationItem(formName, text, tooltipText) {
+	return new NavigationItem(formName, text, tooltipText);
 }
 
 /**
