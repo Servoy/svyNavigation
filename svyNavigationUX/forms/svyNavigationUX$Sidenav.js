@@ -240,7 +240,6 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
 		break;
 	case DEFAULT_NAVBAR_ACTIONS.LOGOUT:
 		// TODO shall implement a onLogout event ?
-		break;
 	default:
 
 		// form to navigate too
@@ -252,6 +251,8 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
 			if (scopes.svyNavigation.open(menuItemId)) {
 				elements.navbar.setMenuSelected(menuItemId);
 			}
+		} else {
+			onNavbarMenuItemClicked(event, menuItem);
 		}
 		break;
 	}

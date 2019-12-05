@@ -91,6 +91,8 @@ function historyBack() {
 	var prevItemsHistoryIndex;
 	if (itemsHistoryIndex === -1) {
 		prevItemsHistoryIndex = itemsHistory.length - 1;
+	} else {
+		prevItemsHistoryIndex = itemsHistoryIndex;
 	}
 	//reduce index by 1
 	prevItemsHistoryIndex --;
@@ -128,7 +130,7 @@ function historyNext() {
 		return null;
 	}
 	
-	var nextItemsHistoryIndex;
+	var nextItemsHistoryIndex = itemsHistoryIndex;
 	//advance index by 1
 	nextItemsHistoryIndex ++;
 	var historyItem = itemsHistory[nextItemsHistoryIndex];
@@ -136,7 +138,7 @@ function historyNext() {
 	//open next item and return that
 	try {
 		skipHistoryEntry = true;
-		scopes.svyNavigation.open(historyItem);
+		success = scopes.svyNavigation.open(historyItem);
 	} catch (e) {
 		throw e;
 	} finally {
