@@ -13,3 +13,12 @@ function getId() {
 function getVersion() {
 	return '1.0.0';
 }
+
+
+/**
+ * @properties={typeid:24,uuid:"00E0EAFE-BAC1-4113-977C-A67B5BA47F76"}
+ * @override
+ */
+function getDependencies() {
+	return [{id: "com.servoy.bap.utils", minVersion: "1.4.0"}]
+}
