@@ -1,0 +1,12 @@
+{
+    "name":"svyNavigation",
+    "displayName":"svyNavigation",
+    "packageType": "Solution",
+    "icon": "https://raw.githubusercontent.com/Servoy/servoy-extra-components/master/servoy.png",
+    "description": "Navigation API for Servoy solutions",
+    "wikiUrl": "https://github.com/Servoy/svyNavigation/wiki",
+    "sourceUrl" : "https://github.com/Servoy/svyNavigation",
+    "releases" : [
+        {"version":"1.0.0","url":"https://github.com/Servoy/svyNavigation/releases/download/v1.0.0/svyNavigation.servoy", "servoy-version":"2019.12", "dependency":"svyUtils#>=1.4.0"}
+     ]
+}
