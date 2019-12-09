@@ -3,7 +3,6 @@
 	<name>svyNavigationUX</name>
 	<comment></comment>
 	<projects>
-		<project>bootstrapextracomponents</project>
 		<project>svyNavigation</project>
 		<project>svySecurity</project>
 		<project>svyUtils</project>
