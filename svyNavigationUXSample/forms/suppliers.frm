@@ -287,6 +287,8 @@ uuid:"FF32DA20-4A64-461C-875D-FF769F4D0C95"
 ],
 name:"suppliers",
 navigatorID:"-1",
+onHideMethodID:"14F6C236-DC0E-433F-8F0D-7F50C5CEECDF",
+onShowMethodID:"D68DAFAD-3233-4055-AEB5-8754C64ABAB5",
 showInMenu:true,
 size:"1001,480",
 styleClass:"bg-tertiary",

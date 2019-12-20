@@ -277,6 +277,8 @@ uuid:"EED2845E-F5BF-4C13-B5DF-B24405C57D28"
 ],
 name:"products",
 navigatorID:"-1",
+onHideMethodID:"64245DFB-59F4-4176-BD80-2605D9424241",
+onShowMethodID:"964B658E-BFE5-48EC-B331-5EB3F73CAF1A",
 showInMenu:true,
 size:"1001,480",
 styleClass:"bg-tertiary",
