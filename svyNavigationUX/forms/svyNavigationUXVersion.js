@@ -11,7 +11,7 @@ function getId() {
  * @properties={typeid:24,uuid:"3F56B20F-BB2F-43BC-95FF-5AD5560AD751"}
  */
 function getVersion() {
-	return '1.0.0';
+	return scopes.svyNavigationUX.getVersion();
 }
 
 /**
