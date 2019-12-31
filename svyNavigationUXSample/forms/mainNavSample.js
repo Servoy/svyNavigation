@@ -10,22 +10,22 @@ function loadMenuItems() {
 	/** @type {CustomType<servoyextra-sidenav.MenuItem>} */
 	var menuItem = new Object();
 	menuItem.id = "svyNavigationUX$Welcome";
-	menuItem.iconStyleClass = "fa fa-home";
-	menuItem.text = "Home";
+	menuItem.iconStyleClass = "fas fa-compass";
+	menuItem.text = "Navigation";
 	menuItems.push(menuItem);
 
 	/** @type {CustomType<servoyextra-sidenav.MenuItem>} */
 	menuItem = new Object();
 	menuItem.id = "suppliers";
 	menuItem.text = "Suppliers"
-	menuItem.iconStyleClass = "fa fa-folder";
+	menuItem.iconStyleClass = "fas fa-truck-loading";
 	menuItems.push(menuItem);
 	
 	/** @type {CustomType<servoyextra-sidenav.MenuItem>} */
 	menuItem = new Object();
 	menuItem.id = "products";
 	menuItem.text = "Products"
-	menuItem.iconStyleClass = "fa fa-folder";
+	menuItem.iconStyleClass = "fas fa-boxes";
 	menuItems.push(menuItem);
 	
 	return menuItems;

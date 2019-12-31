@@ -51,7 +51,18 @@ function initNavigationForm() {
  * @properties={typeid:24,uuid:"7C672A54-C78D-48DF-946B-F1F96993AAB7"}
  */
 function loadMenuItems() {
-	return [];
+	var menuItems = [];
+
+	/** @type {CustomType<servoyextra-sidenav.MenuItem>} */
+	var menuItem = new Object();
+	menuItem.id = "svyNavigationUX$Welcome";
+	menuItem.text = "NAVIGATION"
+	menuItem.iconStyleClass = "fas fa-compass";
+	menuItems.push(menuItem);
+	
+
+        // return the menu items
+	return menuItems;
 }
 
 /**
