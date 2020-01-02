@@ -563,7 +563,8 @@ function addNavigationListener(listener) {
  * @param {function(NavigationEvent)} listener
  * @return {Boolean}
  * 
- * @example<pre>
+ * @example
+ * <pre>
  * scopes.svyNavigation.removeNavigationListener(onOpen);
  * </pre>
  *
