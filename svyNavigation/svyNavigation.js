@@ -4,7 +4,7 @@
  *
  * @properties={typeid:35,uuid:"A92F5349-B980-4FEB-B4DF-DE5EA17E2C48"}
  */
-var SVY_NAVIGATION_VERSION = '1.0.0';
+var SVY_NAVIGATION_VERSION = '1.0.1';
 
 /**
  * Enumeration for navigation policy options which control how to update the stack of navigation item when an item is opened or closed.
