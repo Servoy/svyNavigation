@@ -42,7 +42,15 @@ var NAVIGATION_POLICY = {
  * @properties={typeid:35,uuid:"564021D4-081B-4FE5-8FE4-FF2585815D29",variableType:-4}
  */
 var NAVIGATION_EVENT = {
+	/** 
+	 * register for navigation event to listen for this event (@see addNavigationListener)
+	 * beforeClose event will be fired before navigating allowing a chance to react or cancel 
+	 * */
 	BEFORE_CLOSE: 'before-close',
+	/** 
+	 * register for navigation event to listen for this event (@see addNavigationListener)
+	 * afterOpen event will be fired when a navigation item has been opened; react to the after_open event to implement your navigation 
+	 * */
 	AFTER_OPEN: 'after-open'
 };
 
@@ -187,7 +195,7 @@ function setNavigationPolicies(policies) {
 /**
  * Opens the navigation item. 
  * If the item already exists in the stack, then all items after the specified item are closed
- * beforeClose event will be fired allowing a chance to rect or cancel
+ * beforeClose event will be fired allowing a chance to react or cancel
  * afterOpen will fire allowing UIs to update
  * 
  * @public 
@@ -493,7 +501,8 @@ function hasItem(itemOrID){
  * @public 
  * @param {function(NavigationEvent)} listener
  * 
- * @example<pre> // register for navigation event
+ * @example
+ * <pre> // register for navigation event
  * scopes.svyNavigation.addNavigationListener(onOpen);
  * 
  * function onOpen(event) {
@@ -617,6 +626,7 @@ function fireEvent(eventType, item, dataToShow, dataSelectionType) {
 }
 
 /**
+ * 
  * @constructor
  * @private 
  * @param {String} eventType
