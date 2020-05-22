@@ -123,7 +123,7 @@ function updateMenuItems(){
 	var menuItems = elements.nav.menu;
 	for(var i in menuItems){
 		if(menuItems[i].data.formName == item.getFormName()){
-			elements.nav.setSelectedMenuItem(menuItems[i].id,true);
+			elements.nav.setSelectedMenuItemAsync(menuItems[i].id,true);
 			return;
 		}
 	}

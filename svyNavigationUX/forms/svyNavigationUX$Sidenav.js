@@ -170,9 +170,9 @@ function onOpen(event) {
 	//  update the selected menu item for the main menu
 	var menuId = getMenuItemID(item.getFormName());
 	if (menuId) {
-		elements.sidenav.setSelectedMenuItem(menuId);
+		elements.sidenav.setSelectedMenuItemAsync(menuId);
 	} else {
-		elements.sidenav.setSelectedMenuItem(null);
+		elements.sidenav.setSelectedMenuItemAsync(null);
 	}
 }
 
@@ -323,7 +323,7 @@ function onShow(firstShow, event) {
 			var selectedItemID = getMenuItemID(elements.sidenav.containedForm); 
 			var selectedItem = elements.sidenav.getMenuItem(selectedItemID);
 			if (selectedItem) {
-				elements.sidenav.setSelectedMenuItem(selectedItemID);
+				elements.sidenav.setSelectedMenuItemAsync(selectedItemID);
 			}
 		}
 	}
