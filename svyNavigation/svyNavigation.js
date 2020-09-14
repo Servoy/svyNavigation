@@ -760,9 +760,11 @@ function setupNavigationItem() {
          json.id = this.getID();
          json.formName  = this.getFormName();
          json.text = this.getText();
-         json.tooltipText = this.getTooltipText();
-         json.customData = this.getCustomData();
-         
+		 json.tooltipText = this.getTooltipText();
+         var customData = this.getCustomData();
+         if (customData) {
+        	 json.customData = customData;
+         }         
          return JSON.stringify(json);
     };
     
