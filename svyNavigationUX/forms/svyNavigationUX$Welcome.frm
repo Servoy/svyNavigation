@@ -20,14 +20,17 @@ top:"calc(50% - 81px)",
 width:"60"
 },
 faclass:"fas fa-code fa-4x text-primary",
+imageStyleClass:"fas fa-code fa-4x",
 size:{
 height:25,
 width:25
-}
+},
+styleClass:"default-align text-primary"
 },
 name:"icon2",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"default-align text-primary",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"3A8B8B29-C34C-4AA1-BFC7-AAD683851639"
 },
@@ -43,14 +46,17 @@ top:"calc(50% - 81px)",
 width:"60"
 },
 faclass:"fas fa-compass fa-4x text-primary",
+imageStyleClass:"fas fa-compass fa-4x",
 size:{
 height:25,
 width:25
-}
+},
+styleClass:"default-align text-primary"
 },
 name:"icon1",
 size:"25,25",
-typeName:"servoyextra-fontawesome",
+styleClass:"default-align text-primary",
+typeName:"bootstrapcomponents-label",
 typeid:47,
 uuid:"728D6D27-C279-4DF2-B871-C5F694D7FF11"
 },
