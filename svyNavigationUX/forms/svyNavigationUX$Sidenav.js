@@ -259,7 +259,9 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
 
 		// navigate to a form
 		if (form) {
-			if (scopes.svyNavigation.open(menuItemId)) {
+			// TODO will always be a new navigation item !?!?
+			var item = new scopes.svyNavigation.NavigationItem(menuItemId, menuItem.text);
+			if (scopes.svyNavigation.open(item)) {
 				elements.navbar.setMenuSelected(menuItemId);
 			}
 		} else {
