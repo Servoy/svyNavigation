@@ -23,6 +23,7 @@ function onLoad(event) {
 function initNavigationForm() { }
 
 /**
+ * @return {Boolean}
  * @private
  * @param {scopes.svyNavigation.NavigationEvent} event
  *
@@ -62,6 +63,7 @@ function onOpenHandler(event) {
  * 
  * @private  
  * @param {scopes.svyNavigation.NavigationEvent} event
+ * @return {Boolean}
  *
  * @properties={typeid:24,uuid:"DADEB939-B785-4BA6-B9F1-EAEF9DDEB8EA"}
  */
