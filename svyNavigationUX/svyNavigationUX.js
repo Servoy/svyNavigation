@@ -4,7 +4,7 @@
  *
  * @properties={typeid:35,uuid:"B5500C84-FDCF-496E-9E23-4015ADD023E5"}
  */
-var SVY_NAVIGATION_UX_VERSION = '1.0.2';
+var SVY_NAVIGATION_UX_VERSION = '1.0.3';
 
 /**
  * @protected  
