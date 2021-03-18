@@ -250,7 +250,8 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
 		onGlobalSearch(menuItem.text);
 		break;
 	case DEFAULT_NAVBAR_ACTIONS.LOGOUT:
-		// TODO shall implement a onLogout event ?
+		onLogout();
+		break;
 	default:
 
 		// form to navigate too
@@ -306,6 +307,20 @@ function onNavbarMenuItemClicked(event, menuItem) {
  */
 function onGlobalSearch(searchText) {
 	scopes.svyNavigationUX.triggerGlobalSearch(searchText);
+}
+
+/**
+ * Override the method for a custom logout
+ * @protected  
+ * @properties={typeid:24,uuid:"F1922C29-652B-4738-A236-E8B66B3659C4"}
+ */
+function onLogout() {
+	// test for svySecurity logout
+	if (scopes['svySecurity']) {
+		scopes['svySecurity'].logout();
+	} else {
+		security.logout();
+	}
 }
 
 /**
