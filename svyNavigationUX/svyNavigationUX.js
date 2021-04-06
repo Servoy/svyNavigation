@@ -86,5 +86,5 @@ function triggerGlobalSearch(searchText) {
  * @properties={typeid:24,uuid:"2EA50B1D-90FE-433F-8299-3CDE67CDF35C"}
  */
 function getVersion() {
-    return SVY_NAVIGATION_UX_VERSION;
+    return application.getVersionInfo()['svyNavigationUX'];
 }
