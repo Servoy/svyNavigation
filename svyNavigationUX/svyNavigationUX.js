@@ -1,12 +1,4 @@
 /**
- * @private 
- * @type {String}
- *
- * @properties={typeid:35,uuid:"B5500C84-FDCF-496E-9E23-4015ADD023E5"}
- */
-var SVY_NAVIGATION_UX_VERSION = '1.0.3';
-
-/**
  * @protected  
  * @enum 
  * @properties={typeid:35,uuid:"6DD3A365-FA98-4478-BF8D-1E99AAD08D4B",variableType:-4}
