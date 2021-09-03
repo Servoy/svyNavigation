@@ -213,6 +213,5 @@ function onShow(firstShow, event) {
  * @properties={typeid:24,uuid:"302642E1-1526-42DC-8995-F3D5BDE0F66D"}
  */
 function onActionToggleMenu(event) {
-	// TODO Auto-generated method stub
 	elements.sidenav.open = !elements.sidenav.open
 }
