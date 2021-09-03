@@ -111,7 +111,9 @@ function onOpen(event) {
  */
 function onMenuItemSelectedHandler(menuItemId, event) {
 	
-	elements.sidenav.open = false;
+	if (onMenuItemSelected(menuItemId, event) === true) {
+		elements.sidenav.open = false;
+	}
 	
 	if(menuItemId === "LOGOUT"){
 		onLogout();
