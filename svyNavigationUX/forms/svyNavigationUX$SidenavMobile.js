@@ -37,16 +37,16 @@ function initNavigationForm() {
  */
 function loadMenuItems() {
 	var menuItems = [];
-
-	/** @type {CustomType<servoyextra-sidenav.MenuItem>} */
-	var menuItem = new Object();
-	menuItem.id = "svyNavigationUX$Welcome";
-	menuItem.text = "NAVIGATION"
-	menuItem.iconStyleClass = "fas fa-compass";
-	menuItems.push(menuItem);
+	var menuItem;
 	
+	// Logout
+	menuItem = new Object();
+	menuItem.id = "LOGOUT";
+	menuItem.text = "LOGOUT"
+	menuItem.iconStyleClass = "fas fa-sign-out-alt";
+	menuItems.push(menuItem);
 
-        // return the menu items
+    // return the menu items
 	return menuItems;
 }
 
@@ -110,6 +110,10 @@ function onOpen(event) {
  * @properties={typeid:24,uuid:"838EF5AF-505D-4B1A-8C1A-7948BCC14423"}
  */
 function onMenuItemSelectedHandler(menuItemId, event) {
+	
+	if(menuItemId === "LOGOUT"){
+		onLogout();
+	}
 
 	if (onMenuItemSelected(menuItemId, event) === false) {
 		return false;
