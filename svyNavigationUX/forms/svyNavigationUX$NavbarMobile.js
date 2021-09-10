@@ -133,8 +133,8 @@ function loadNavbarItems() {
  * @properties={typeid:24,uuid:"749FDF50-DA8D-4F86-B4DF-EF053918F4DC"}
  */
 function getActiveFormName() {
-	if (elements.sidenav && elements.sidenav.containedForm) {
-		return elements.sidenav.containedForm;
+	if (elements.formcontainer && elements.formcontainer.containedForm) {
+		return elements.formcontainer.containedForm;
 	} else {
 		return null;
 	}
@@ -160,14 +160,15 @@ function onOpen(event) {
 	}
 
 	// show form
-	elements.sidenav.containedForm = formName;
+	elements.formcontainer.containedForm = formName;
 
 	//  update the selected menu item for the main menu
+	/** @type {String} */
 	var menuId = getMenuItemID(item.getFormName());
 	if (menuId) {
-		elements.sidenav.setSelectedMenuItem(menuId, false, false);
+		elements.navbar.setMenuSelected(menuId);
 	} else {
-		elements.sidenav.setSelectedMenuItem(null, false, false);
+		elements.navbar.setMenuSelected(null);
 	}
 }
 
@@ -195,7 +196,7 @@ function onMenuItemSelectedHandler(menuItemId, event) {
 
 	// open the selected navigation item
 	if (menuItemId && formName && form) {
-		var menuItem = elements.sidenav.getMenuItem(menuItemId);
+		var menuItem = elements.formcontainer.getMenuItem(menuItemId);
 
 		// TODO will always be a new navigation item !?!?
 		var item = new scopes.svyNavigation.NavigationItem(formName, menuItem.text);
@@ -331,11 +332,12 @@ function onLogout() {
 function onShow(firstShow, event) {
 	if (firstShow) {
 		// set first selection
-		if (elements.sidenav.containedForm) {
-			var selectedItemID = getMenuItemID(elements.sidenav.containedForm);
-			var selectedItem = elements.sidenav.getMenuItem(selectedItemID);
+		if (elements.formcontainer.containedForm) {
+			/** @type {String}*/
+			var selectedItemID = getMenuItemID(elements.formcontainer.containedForm);
+			var selectedItem = elements.navbar.getMenuItem(selectedItemID);
 			if (selectedItem) {
-				elements.sidenav.setSelectedMenuItem(selectedItemID, false, false);
+				elements.navbar.setMenuSelected(selectedItemID, false, false);
 			}
 		}
 	}
