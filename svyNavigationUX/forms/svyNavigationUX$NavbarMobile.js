@@ -173,58 +173,6 @@ function onOpen(event) {
 }
 
 /**
- * Called whenever a menu item from the sidenav is selected with the JSEvent and the menuItemId clicked on.
- *
- * @param {String} menuItemId
- * @param {JSEvent} event
- *
- * @return {boolean}
- *
- * @private
- *
- * @properties={typeid:24,uuid:"B4FC7397-E5FC-4FFA-8227-C9812013657A"}
- */
-function onMenuItemSelectedHandler(menuItemId, event) {
-
-	if (onMenuItemSelected(menuItemId, event) === false) {
-		return false;
-	}
-
-	// form to navigate too
-	var formName = getMenuItemFormName(menuItemId)
-	var form = forms[formName];
-
-	// open the selected navigation item
-	if (menuItemId && formName && form) {
-		var menuItem = elements.formcontainer.getMenuItem(menuItemId);
-
-		// TODO will always be a new navigation item !?!?
-		var item = new scopes.svyNavigation.NavigationItem(formName, menuItem.text);
-		return scopes.svyNavigation.open(item);
-	}
-
-	return true;
-}
-
-/**
- * Called as part of the onMenuItemSelectedHandler event
- * Called whenever a menu item from the sidenav is selected with the JSEvent and the menuItemId clicked on.
- * This method can be overriden to prevent the selection (.e.g check if user has permissions) or for handling specific menu options which will trigger a function (.e.g logout) instead of switching the visible form
- * Return false to stop the navigation and prevent the selection.
- *
- * @protected
- * @param {String} menuItemId
- * @param {JSEvent} event
- *
- * @return {Boolean}
- *
- * @properties={typeid:24,uuid:"CC8DD323-478F-4516-9170-A37ADA1361F6"}
- */
-function onMenuItemSelected(menuItemId, event) {
-	return true;
-}
-
-/**
  * Called whenever a menu item is clicked or a submenu item is selected with the JSEvent and the menuItem object clicked on.
  *
  * @param {JSEvent} event
@@ -237,7 +185,7 @@ function onMenuItemSelected(menuItemId, event) {
 function onNavbarMenuItemClickedHandler(event, menuItem) {
 	var menuItemId = menuItem.itemId;
 
-	if (onMenuItemSelected(menuItemId, event) === false) {
+	if (onNavbarMenuItemClicked(event, menuItem) === false) {
 		return;
 	}
 
@@ -275,6 +223,8 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
  *
  * @param {JSEvent} event
  * @param {CustomType<bootstrapextracomponents-navbar.menuItem>} menuItem
+ * 
+ * @return {Boolean}
  * @protected
  *
  * @example <pre>
@@ -293,6 +243,7 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
  */
 function onNavbarMenuItemClicked(event, menuItem) {
 	// intentionally left empty
+	return true;
 }
 
 /**
