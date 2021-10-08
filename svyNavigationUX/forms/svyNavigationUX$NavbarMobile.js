@@ -288,7 +288,7 @@ function onShow(firstShow, event) {
 			var selectedItemID = getMenuItemID(elements.formcontainer.containedForm);
 			var selectedItem = elements.navbar.getMenuItem(selectedItemID);
 			if (selectedItem) {
-				elements.navbar.setMenuSelected(selectedItemID, false, false);
+				elements.navbar.setMenuSelected(selectedItemID);
 			}
 		}
 	}
