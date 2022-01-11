@@ -3,3 +3,7 @@
 .svyNavigationUX {
 	
 }
+
+.svynav-mobile-sidenav .svynav-content {
+		z-index: 1;
+}

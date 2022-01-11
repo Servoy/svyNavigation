@@ -59,8 +59,8 @@ function loadMenuItems() {
  * @properties={typeid:24,uuid:"6DEB91C0-1D7A-40FF-9E13-4BE9F73D9E96"}
  */
 function getActiveFormName() {
-	if (elements.sidenav && elements.sidenav.containedForm) {
-		return elements.sidenav.containedForm;
+	if (elements.content && elements.content.containedForm) {
+		return elements.content.containedForm;
 	} else {
 		return null;
 	}
@@ -86,7 +86,7 @@ function onOpen(event) {
 	}
 
 	// show form
-	elements.sidenav.containedForm = formName;
+	elements.content.containedForm = formName;
 
 	//  update the selected menu item for the main menu
 	var menuId = getMenuItemID(item.getFormName());
@@ -195,8 +195,8 @@ function onLogout() {
 function onShow(firstShow, event) {
 	if (firstShow) {
 		// set first selection
-		if (elements.sidenav.containedForm) {
-			var selectedItemID = getMenuItemID(elements.sidenav.containedForm); 
+		if (elements.content.containedForm) {
+			var selectedItemID = getMenuItemID(elements.content.containedForm); 
 			var selectedItem = elements.sidenav.getMenuItem(selectedItemID);
 			if (selectedItem) {
 				elements.sidenav.setSelectedMenuItem(selectedItemID, false, false);
