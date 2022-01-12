@@ -5,6 +5,7 @@ items:[
 {
 cssPosition:"50,0,0,0,-1,-1",
 json:{
+containedForm:"4A13B0EE-315E-4897-9E32-983C3124F557",
 cssPosition:{
 bottom:"0",
 height:"-1",
@@ -28,6 +29,7 @@ uuid:"39D1B9A9-87F6-41BA-9EE8-9E64A851CF8B"
 {
 cssPosition:"0,0,-1,0,-1,50",
 json:{
+collapsing:true,
 cssPosition:{
 bottom:"-1",
 height:"50",
