@@ -21,46 +21,6 @@ function initNavigationForm() {
 }
 
 /**
- * This method is called as part of then form's onLoad event.
- * Load the returned list of menu items into the sidenav menu of the template.
- * Override this method and return an Array of type servoyextra-sidenav.MenuItem (Array<servoyextra-sidenav.MenuItem>)
- * to initialize the sidenav menu with your own set of menu items.<br/>
- * Learn more on MenuItem and Sidenav https://github.com/Servoy/servoy-extra-components/wiki/Sidenav#menu-item
- *
- * @return {Array<CustomType<servoyextra-sidenav.MenuItem>>}
- * @protected
- *
- * @example <pre>
- * function loadMenuItems() {
- * 	var menuItems = [];
- *
- *	\\ @type {CustomType&lt;servoyextra-sidenav.MenuItem&gt;}
- *	var menuItem = new Object();
- *	menuItem.id = "yourFormName";
- *	menuItem.iconStyleClass = "fa fa-home";
- *	menuItem.text = "Home";
- *	menuItems.push(menuItem);
- *
- *	return menuItems;
- *}
- * </pre>
- * @properties={typeid:24,uuid:"AF61BE50-553C-4679-9CFB-F88C841E1F52"}
- */
-function loadMenuItems() {
-	var menuItems = [];
-
-	/** @type {CustomType<servoyextra-sidenav.MenuItem>} */
-	var menuItem = new Object();
-	menuItem.id = "svyNavigationUX$Welcome";
-	menuItem.text = "NAVIGATION"
-	menuItem.iconStyleClass = "fas fa-compass";
-	menuItems.push(menuItem);
-
-	// return the menu items
-	return menuItems;
-}
-
-/**
  *
  * This method is called as part of then form's onLoad event.
  * Load the returned list of menu items into the top navbar menu of this template.
@@ -204,7 +164,6 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
 
 		// navigate to a form
 		if (form) {
-			// TODO will always be a new navigation item !?!?
 			var item = new scopes.svyNavigation.NavigationItem(menuItemId, menuItem.text);
 			if (scopes.svyNavigation.open(item)) {
 				elements.navbar.setMenuSelected(menuItemId);

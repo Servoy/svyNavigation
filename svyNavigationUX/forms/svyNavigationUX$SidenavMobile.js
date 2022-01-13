@@ -1,4 +1,12 @@
 /**
+ * @protected 
+ * @properties={typeid:35,uuid:"24C319A0-0596-4FBA-AC1D-E0A3E08F2285",variableType:-4}
+ */
+var DEFAULT_SIDENAV_ACTIONS = {
+	LOGOUT: "navbar-logout"
+}
+
+/**
  * @private
  * @properties={typeid:24,uuid:"D61BD41E-CE6B-430A-B51B-C771DD1405FE"}
  * @override
@@ -39,12 +47,14 @@ function loadMenuItems() {
 	var menuItems = [];
 	var menuItem;
 	
-	// Logout
-	menuItem = new Object();
-	menuItem.id = "LOGOUT";
-	menuItem.text = "LOGOUT"
-	menuItem.iconStyleClass = "fas fa-sign-out-alt";
-	menuItems.push(menuItem);
+	if (security.getUserName()) {
+		// Logout
+		menuItem = new Object();
+		menuItem.id = "LOGOUT";
+		menuItem.text = "LOGOUT"
+		menuItem.iconStyleClass = "fas fa-sign-out-alt";
+		menuItems.push(menuItem);
+	}
 
     // return the menu items
 	return menuItems;
@@ -115,7 +125,7 @@ function onMenuItemSelectedHandler(menuItemId, event) {
 		elements.sidenav.open = false;
 	}
 	
-	if(menuItemId === "LOGOUT"){
+	if(menuItemId === DEFAULT_SIDENAV_ACTIONS.LOGOUT){
 		onLogout();
 		return false;
 	}
@@ -132,7 +142,6 @@ function onMenuItemSelectedHandler(menuItemId, event) {
 	if (menuItemId && formName && form) {
 		var menuItem = elements.sidenav.getMenuItem(menuItemId);
 
-		// TODO will always be a new navigation item !?!?
 		var item = new scopes.svyNavigation.NavigationItem(formName, menuItem.text);
 		return scopes.svyNavigation.open(item);
 	}
@@ -156,16 +165,6 @@ function onMenuItemSelectedHandler(menuItemId, event) {
  */
 function onMenuItemSelected(menuItemId, event) {
 	return true;
-}
-
-/**
- * @private 
- * @param {String} searchText
- *
- * @properties={typeid:24,uuid:"43E9E66B-9877-4EDD-8413-5F6A2959A329"}
- */
-function onGlobalSearch(searchText) {
-	scopes.svyNavigationUX.triggerGlobalSearch(searchText);
 }
 
 /**
