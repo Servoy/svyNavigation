@@ -130,9 +130,9 @@ function onMenuItemSelectedHandler(menuItemId, event) {
 		return false;
 	}
 
-	if (onMenuItemSelected(menuItemId, event) === false) {
+	/*if (onMenuItemSelected(menuItemId, event) === false) {
 		return false;
-	}
+	}*/
 
 	// form to navigate too
 	var formName = getMenuItemFormName(menuItemId)
