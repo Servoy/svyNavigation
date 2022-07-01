@@ -120,8 +120,9 @@ function onOpen(event) {
  * @properties={typeid:24,uuid:"838EF5AF-505D-4B1A-8C1A-7948BCC14423"}
  */
 function onMenuItemSelectedHandler(menuItemId, event) {
+	var menuItemSelected = onMenuItemSelected(menuItemId, event);
 	
-	if (onMenuItemSelected(menuItemId, event) === true) {
+	if (menuItemSelected === true) {
 		elements.sidenav.open = false;
 	}
 	
@@ -130,9 +131,9 @@ function onMenuItemSelectedHandler(menuItemId, event) {
 		return false;
 	}
 
-	/*if (onMenuItemSelected(menuItemId, event) === false) {
+	if (menuItemSelected === false) {
 		return false;
-	}*/
+	}
 
 	// form to navigate too
 	var formName = getMenuItemFormName(menuItemId)
