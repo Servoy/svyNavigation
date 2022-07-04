@@ -120,9 +120,9 @@ function onOpen(event) {
  * @properties={typeid:24,uuid:"838EF5AF-505D-4B1A-8C1A-7948BCC14423"}
  */
 function onMenuItemSelectedHandler(menuItemId, event) {
-	var menuItemSelected = onMenuItemSelected(menuItemId, event);
+	var innerMenuItemSelected = onMenuItemSelected(menuItemId, event);
 	
-	if (menuItemSelected === true) {
+	if (innerMenuItemSelected === true) {
 		elements.sidenav.open = false;
 	}
 	
@@ -131,7 +131,7 @@ function onMenuItemSelectedHandler(menuItemId, event) {
 		return false;
 	}
 
-	if (menuItemSelected === false) {
+	if (innerMenuItemSelected === false) {
 		return false;
 	}
 
