@@ -168,8 +168,6 @@ function onNavbarMenuItemClickedHandler(event, menuItem) {
 			if (scopes.svyNavigation.open(item)) {
 				elements.navbar.setMenuSelected(menuItemId);
 			}
-		} else {
-			onNavbarMenuItemClicked(event, menuItem);
 		}
 		break;
 	}
