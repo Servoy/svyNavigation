@@ -35,7 +35,6 @@ right:"-1",
 top:"780px",
 width:"80"
 },
-faclass:"fas fa-code fa-4x text-primary",
 imageStyleClass:"fas fa-code fa-4x",
 size:{
 height:25,
@@ -81,7 +80,6 @@ right:"-1",
 top:"350px",
 width:"60"
 },
-faclass:"fas fa-compass fa-4x text-primary",
 imageStyleClass:"fas fa-compass fa-4x",
 size:{
 height:25,
